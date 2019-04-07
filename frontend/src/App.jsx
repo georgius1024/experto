@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 
 import classNames from 'classnames'
-import ObservableSocket from './observable-socket'
+import ObservableSocket from './utils/observable-socket'
 import actions from './store/actions'
 
 import HomeView from './views/Home'

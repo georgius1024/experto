@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { withRouter, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import actions from '../store/actions'
-import ObservableSocket from '../observable-socket'
+import ObservableSocket from '../utils/observable-socket'
 import { CameraSubscription, CameraControlSubscription } from '../Components/Subscription'
 import Publication from '../Components/Publication'
 
@@ -152,11 +152,10 @@ class Presenter extends PureComponent {
       <div className="card mt-5">
         <div className="card-body">
           <h5 className="card-title">Встреча &quot;{this.props.appointment.roomName}&quot;</h5>
-          <div className="card-text" >
+          <div className="card-text">
             {this.myCamera()}
             {this.roomParticipantrs()}
             {this.myPublication()}
-          
           </div>
         </div>
         <div className="card-footer">
@@ -185,7 +184,7 @@ Presenter.propTypes = {
   audioEnable: PropTypes.func,
   audioDisable: PropTypes.func,
   videoEnable: PropTypes.func,
-  videoDisable: PropTypes.func,
+  videoDisable: PropTypes.func
 }
 
 const mapStateToProps = state => {
@@ -195,7 +194,7 @@ const mapStateToProps = state => {
     publication: state.publication,
     subscriptions: state.subscriptions,
     audio: state.audio,
-    video: state.video,
+    video: state.video
   }
 }
 
@@ -208,7 +207,7 @@ const mapDispatchToProps = dispatch => {
     audioEnable: payload => dispatch(actions.audioEnable(payload)),
     audioDisable: payload => dispatch(actions.audioDisable(payload)),
     videoEnable: payload => dispatch(actions.videoEnable(payload)),
-    videoDisable: payload => dispatch(actions.videoDisable(payload)),
+    videoDisable: payload => dispatch(actions.videoDisable(payload))
   }
 }
 

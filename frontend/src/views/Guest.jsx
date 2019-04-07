@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { withRouter, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import actions from '../store/actions'
-import ObservableSocket from '../observable-socket'
+import ObservableSocket from '../utils/observable-socket'
 import { CameraSubscription } from '../Components/Subscription'
 
 class Guest extends PureComponent {

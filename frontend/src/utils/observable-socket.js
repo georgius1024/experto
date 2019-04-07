@@ -60,14 +60,14 @@ class ObservableSocket {
     this.close$.complete()
     this.message$.complete()
     this.open$.complete()
+    this.error$.unsubscribe()
+    this.close$.unsubscribe()
+    this.message$.unsubscribe()
+    this.open$.unsubscribe()
     if (this.online) {
       this.webSocket.close()
     }
     this.webSocket = undefined
-    this.error$ = undefined
-    this.close$ = undefined
-    this.message$ = undefined
-    this.open$ = undefined
   }
 
   sendRaw(payload) {
