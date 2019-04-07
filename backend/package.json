@@ -1,0 +1,27 @@
+{
+  "name": "koa-vc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^7.0.0",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "@koa/cors": "^2.2.2",
+    "moment": "^2.24.0",
+    "ms": "^2.1.1",
+    "uuid": "^3.3.2",
+    "ws": "^6.2.1",
+    "kurento-client": "a-sync/kurento-client-js"
+  }
+}

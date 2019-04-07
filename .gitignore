@@ -1,0 +1,14 @@
+# Node modules
+node_modules
+#editor files
+.idea
+.vscode
+#other files
+public
+dist
+sh.cmd
+yarn.lock
+package-lock.json
+snapshots
+# Environment variables, never commit this file
+.env

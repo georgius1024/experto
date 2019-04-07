@@ -1,0 +1,9 @@
+# Node modules
+node_modules
+#editor files
+.idea
+.vscode
+#other files
+public
+# Environment variables, never commit this file
+.env
