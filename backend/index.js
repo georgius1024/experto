@@ -15,7 +15,7 @@ const router = require('./src/router')
 const ApiController = require('./src/classes/api-controller')
 const RoomPool = require('./src/classes/room-pool')
 
-const { getKurentoClient$ } = require('./src/kurento-calls')
+const { getKurentoClient$ } = require('./src/utils/kurento-calls')
 const app = new Koa()
 const ws = require('ws')
 const Rtc = new RoomPool('1d')
