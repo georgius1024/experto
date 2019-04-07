@@ -1,5 +1,5 @@
 // Error catcher
-const { errorResponse } = require('./responses')
+const { errorResponse } = require('./utils/responses')
 function errorHandler(app) {
   app.use(async (ctx, next) => {
     try {

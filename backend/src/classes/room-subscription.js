@@ -1,6 +1,6 @@
 const kurento = require('kurento-client')
 
-const { createWebRtcEndpoint$ } = require('../kurento-calls')
+const { createWebRtcEndpoint$ } = require('../utils/kurento-calls')
 
 class RoomSubscription {
   constructor(participant, channel) {

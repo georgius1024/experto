@@ -10,7 +10,7 @@ const {
   startRecording$,
   pauseRecording$,
   stopRecording$
-} = require('../kurento-calls')
+} = require('../utils/kurento-calls')
 
 class RooomPublication {
   constructor(participant, channel, path = null) {
