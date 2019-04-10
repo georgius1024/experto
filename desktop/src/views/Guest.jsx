@@ -57,7 +57,7 @@ class Guest extends PureComponent {
           const subscriptions = []
           message.data.forEach(publisher =>
             publisher.channels.forEach(channel => {
-              subscriptions.push({ channel, name: publisher.name, role: publisher.role })
+              subscriptions.push({ channel, name: publisher.name })
             })
           )
           this.props.subscriptionUpdateAll(subscriptions)
@@ -67,7 +67,7 @@ class Guest extends PureComponent {
       }
     })
     this.logging = process.env.NODE_ENV !== 'production'
-    this.signalSocket.reconnect = false
+    this.signalSocket.reconnect = true
     this.signalSocket.connect()
   }
 

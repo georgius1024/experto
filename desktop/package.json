@@ -1,0 +1,77 @@
+{
+  "name": "my-app",
+  "description": "Electron + Create React App + Electron Builder",
+  "version": "0.1.0",
+  "private": true,
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@domain.com",
+    "url": "https://your-website.com"
+  },
+  "build": {
+    "appId": "com.my-website.my-app",
+    "productName": "MyApp",
+    "copyright": "Copyright © 2019 ${author}",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  },
+  "homepage": "./",
+  "main": "public/electron.js",
+  "scripts": {
+    "start": "rescripts start",
+    "build": "rescripts build",
+    "test": "rescripts test",
+    "eject": "react-scripts eject",
+    "electron-dev": "concurrently \"cross-env BROWSER=none PORT=7000 yarn start\" \"wait-on http://localhost:7000 && electron .\" --kill-others",
+    "postinstall": "electron-builder install-app-deps",
+    "preelectron-pack": "yarn build",
+    "electron-pack": "build -w"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "rescripts": [
+    "env"
+  ],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "electron-is-dev": "^1.0.1",
+    "kurento-utils": "^6.9.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-bootstrap": "^1.0.0-beta.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^6.0.1",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "2.1.8",
+    "redux": "^4.0.1",
+    "webrtc-adapter": "^7.2.1"
+  },
+  "devDependencies": {
+    "@rescripts/cli": "^0.0.10",
+    "@rescripts/rescript-env": "^0.0.5",
+    "@fortawesome/fontawesome-free": "^5.8.1",
+    "eslint-plugin-react": "^7.12.4",
+    "concurrently": "^4.1.0",
+    "electron": "^4.0.6",
+    "electron-builder": "^20.38.5",
+    "electron-devtools-installer": "^2.2.4",
+    "node-sass": "^4.11.0",
+    "typescript": "^3.3.3333",
+    "wait-on": "^3.2.0"
+  }
+}

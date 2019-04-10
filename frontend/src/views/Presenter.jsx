@@ -4,8 +4,8 @@ import { withRouter, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import actions from '../store/actions'
 import ObservableSocket from '../utils/observable-socket'
-import { CameraSubscription, CameraControlSubscription } from '../Components/Subscription'
-import Publication from '../Components/Publication'
+import { CameraSubscription, CameraControlSubscription } from '../components/Subscription'
+import Publication from '../components/Publication'
 
 class Presenter extends PureComponent {
   constructor(props) {
@@ -13,28 +13,22 @@ class Presenter extends PureComponent {
     this.subscription = null
   }
   componentDidMount() {
-    console.log('componentDidMount')
     this.connect()
   }
   componentDidUpdate(prevProps) {
-    console.log('componentDidUpdate', prevProps, this.props)
     const sameRoom = prevProps.appointment.roomId === this.props.appointment.roomId
     const sameCode = prevProps.match.params.code === this.props.match.params.code
     if (!sameRoom || !sameCode) {
-      console.log('reconnect', sameRoom, sameCode, this.props.appointment.roomId, this.props.match.params.code)
       this.connect()
     }
   }
   componentWillUnmount() {
-    console.log('componentWillUnmount')
     this.props.publicationRemove()
     this.props.subscriptionRemoveAll()
     this.signalSocket.disconnect()
-    this.signalSocket = null
   }
 
   connect() {
-    console.log('New connection')
     const roomId = this.props.appointment.roomId
     const code = this.props.match.params.code
     const BACKEND_URL = process.env.NODE_ENV === 'production' ? window.location.host : '127.0.0.1:6300'
@@ -46,41 +40,34 @@ class Presenter extends PureComponent {
 
     this.signalSocket.error$.subscribe(() => {
       this.error('Socket error')
-      this.props.publicationRemove()
-      this.props.subscriptionRemoveAll()
-      this.socket.destroy()
       this.props.history.push('/')
     })
 
     this.signalSocket.close$.subscribe(() => {
       this.error('Socket disconnected')
-      this.props.publicationRemove()
-      this.props.subscriptionRemoveAll()
-      this.socket.destroy()
       this.props.history.push('/')
     })
 
     this.signalSocket.message$.subscribe(message => {
       switch (message.id) {
-      case 'welcome':
-        this.props.publicationAdd(message.participantId + '-camera')
-        break
-      case 'publications':
-        {
-          const subscriptions = []
-          message.data.forEach(publisher =>
-            publisher.channels.forEach(channel => {
-              subscriptions.push({ channel, name: publisher.name })
-            })
-          )
-          this.props.subscriptionUpdateAll(subscriptions)
-        }
-        break
-      default:
+        case 'welcome':
+          this.props.publicationAdd(message.participantId + '-camera')
+          break
+        case 'publications':
+          {
+            const subscriptions = []
+            message.data.forEach(publisher =>
+              publisher.channels.forEach(channel => {
+                subscriptions.push({ channel, name: publisher.name })
+              })
+            )
+            this.props.subscriptionUpdateAll(subscriptions)
+          }
+          break
+        default:
       }
     })
     this.logging = process.env.NODE_ENV !== 'production'
-    this.signalSocket.reconnect = true
     this.signalSocket.connect()
   }
 
@@ -151,7 +138,7 @@ class Presenter extends PureComponent {
     return (
       <div className="card mt-5">
         <div className="card-body">
-          <h5 className="card-title">Встреча &quot;{this.props.appointment.roomName}&quot;</h5>
+          <h5 className="card-title">Встреча &quot;{this.props.appointment.roomName}&quot; - ведущий</h5>
           <div className="card-text">
             {this.myCamera()}
             {this.roomParticipantrs()}

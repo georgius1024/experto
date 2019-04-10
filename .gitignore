@@ -10,5 +10,6 @@ sh.cmd
 yarn.lock
 package-lock.json
 snapshots
+.trash
 # Environment variables, never commit this file
 .env
