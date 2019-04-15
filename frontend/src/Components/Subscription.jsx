@@ -1,8 +1,9 @@
 import React, { Component, PureComponent } from 'react'
+import classNames from 'classnames'
 import { filter } from 'rxjs/operators'
 import PropTypes from 'prop-types'
 import kurentoUtils from 'kurento-utils'
-import styles from './Subscription.module.scss'
+import styles from './subscription.module.scss'
 import microphoneOn from '../assets/microphone-solid.svg'
 import microphoneOff from '../assets/microphone-slash-solid.svg'
 import videoOn from '../assets/video-solid.svg'
@@ -72,24 +73,24 @@ class DefaultSubscription extends Component {
       .pipe(filter(message => message.channel === this.props.channel))
       .subscribe(message => {
         switch (message.id) {
-        case 'startResponseForSubscriber':
-          this.log('SDP answer received from server. Connecting...')
-          this.webRtcPeer.processAnswer(message.sdpAnswer)
-          this.onConnected()
-          break
-        case 'error':
-          this.error('Error message from server', message.message)
-          break
-        case 'iceCandidateForSubscriber':
-          this.webRtcPeer.addIceCandidate(message.candidate)
-          break
-        case 'stopPublishing':
-          this.unsubscribe()
-          break
-        case 'startPublishing':
-          this.subscribe()
-          break
-        default:
+          case 'startResponseForSubscriber':
+            this.log('SDP answer received from server. Connecting...')
+            this.webRtcPeer.processAnswer(message.sdpAnswer)
+            this.onConnected()
+            break
+          case 'error':
+            this.error('Error message from server', message.message)
+            break
+          case 'iceCandidateForSubscriber':
+            this.webRtcPeer.addIceCandidate(message.candidate)
+            break
+          case 'stopPublishing':
+            this.unsubscribe()
+            break
+          case 'startPublishing':
+            this.subscribe()
+            break
+          default:
         }
       })
     this.subscribe()
@@ -208,7 +209,7 @@ class CameraSubscription extends PureComponent {
       this.setState({ connected: true })
     }
     return (
-      <div className={styles['camera-subscription']}>
+      <div className={classNames(styles['subscription'], styles['camera-subscription'])}>
         {this.state.connected && this.state.initial ? (
           <div className={this.state.initial ? styles.overlay : styles.hidden}>
             <button className={styles.unmute} onClick={this.unmute}>
@@ -235,6 +236,16 @@ class CameraSubscription extends PureComponent {
   }
 }
 
+class ScreenSubscription extends PureComponent {
+  render() {
+    return (
+      <div className={classNames(styles['subscription'], styles['screen-subscription'])}>
+        <DefaultSubscription {...this.props} />
+      </div>
+    )
+  }
+}
+
 class CameraControlSubscription extends PureComponent {
   constructor(props) {
     super(props)
@@ -247,7 +258,7 @@ class CameraControlSubscription extends PureComponent {
       this.setState({ connected: true })
     }
     return (
-      <div className={styles['camera-control-subscription']}>
+      <div className={classNames(styles['subscription'], styles['camera-control-subscription'])}>
         {this.state.connected ? (
           <div className={styles['controls-panel']}>
             <div className={styles['buttons']}>
@@ -298,7 +309,7 @@ CameraControlSubscription.propTypes = {
 export {
   DefaultSubscription as default,
   MutedSubscription,
-  MutedSubscription as ScreenSubscription,
+  ScreenSubscription,
   MutedSubscription as ScreenControlSubscription,
   CameraSubscription,
   CameraControlSubscription

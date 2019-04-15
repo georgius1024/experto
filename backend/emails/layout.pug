@@ -1,0 +1,42 @@
+doctype transitional
+html(xmlns="http://www.w3.org/1999/xhtml")
+  head
+    meta(name="viewport" content="width=device-width")
+    meta(http-equiv="Content-Type" content="text/html; charset=UTF-8")
+    title Автоматически сформированное сообщение
+    link(href="styles.css" media="all" rel="stylesheet" type="text/css")
+  body
+    tr
+      td
+      td.container(width="600")
+        .content
+          table.main(width="100%" cellpadding="0" cellspacing="0")
+            tr
+              td.content-wrap
+                table(width="100%" cellpadding="0" cellspacing="0")
+                  tr
+                    td.jumbotron
+                      block jumbotron
+                        a(href="#") #{ APP_NAME }
+                  tr
+                    td.content-block
+                      block header
+                        h3 Header there...
+                  tr
+                    td.content-block
+                      block content
+                        p Content there...
+                  tr
+                    td.content-block.aligncenter
+                      block action
+                        a.btn-primary(href="#") Action there
+          .footer
+            table(width="100%")
+              tr
+                td.aligncenter.content-block
+                  p #{ MAIL_SIGNATURE }
+                  block footer
+                  p
+                    small Это письмо сфорировано автоматически. Пожалуйста, не отвечайте на него.
+
+      td

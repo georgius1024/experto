@@ -9,7 +9,9 @@ function actionFactory(type) {
   }
 }
 const actions = {
-  masterCodeAdd: actionFactory(consts.MASTER_CODE_ADD),
+  register: actionFactory(consts.REGISTER),
+  unregister: actionFactory(consts.UNREGISTER),
+  refresh: actionFactory(consts.REFRESH),
   publicationCameraAdd: actionFactory(consts.PUBLICATION_CAMERA_ADD),
   publicationCameraRemove: actionFactory(consts.PUBLICATION_CAMERA_REMOVE),
   publicationScreenAdd: actionFactory(consts.PUBLICATION_SCREEN_ADD),
@@ -25,9 +27,6 @@ const actions = {
   cameraVideoDisable: actionFactory(consts.CAMERA_VIDEO_DISABLE),
   screenVideoEnable: actionFactory(consts.SCREEN_VIDEO_ENABLE),
   screenVideoDisable: actionFactory(consts.SCREEN_VIDEO_DISABLE),
-  userNameUpdate: actionFactory(consts.USERNAME_UPDATE),
-  appointmentUpdate: actionFactory(consts.APPOINTMENT_UPDATE),
-  controlSocketUpdate: actionFactory(consts.CONTROL_SOCKET_UPDATE)
 }
 
 export default actions

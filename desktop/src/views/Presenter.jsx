@@ -4,10 +4,12 @@ import { withRouter, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import actions from '../store/actions'
 import ObservableSocket from '../utils/observable-socket'
-import { CameraSubscription, ScreenSubscription, CameraControlSubscription } from '../components/Subscription'
-import Publication from '../components/Publication'
+import { CameraSubscription, ScreenSubscription, CameraControlSubscription } from '../components/subscription'
+import Publication from '../components/publication'
+import config from '../config'
+import { alert, error } from '../components/alert'
 const electron = window.require('electron')
-
+// TODO LOGGING
 const getScreenConstraints = (src, callback) => {
   electron.desktopCapturer.getSources({ types: ['screen'] }, (error, sources) => {
     if (error) {
@@ -34,15 +36,20 @@ window.getScreenConstraints = getScreenConstraints
 class Presenter extends PureComponent {
   constructor(props) {
     super(props)
+    this.state = {
+      presenter: null,
+      started: false
+    }
     this.subscription = null
+    this.onStart = this.onStart.bind(this)
+    this.onStop = this.onStop.bind(this)
   }
   componentDidMount() {
     this.connect()
   }
   componentDidUpdate(prevProps) {
-    const sameRoom = prevProps.appointment.roomId === this.props.appointment.roomId
     const sameCode = prevProps.match.params.code === this.props.match.params.code
-    if (!sameRoom || !sameCode) {
+    if (!sameCode) {
       this.connect()
     }
   }
@@ -51,34 +58,43 @@ class Presenter extends PureComponent {
     this.props.subscriptionsRemoveAll()
     this.signalSocket.disconnect()
   }
-
+  onStart() {
+    this.setState({
+      started: true
+    })
+    this.props.publicationCameraAdd(this.state.presenter.participantId + '-camera')
+    this.props.publicationScreenAdd(this.state.presenter.participantId + '-screen')
+  }
+  onStop() {
+    this.props.history.push('/')
+  }
   connect() {
     console.log('New connection')
-    const roomId = this.props.appointment.roomId
     const code = this.props.match.params.code
-    //const BACKEND_URL = process.env.NODE_ENV === 'production' ? window.location.host : '127.0.0.1:6300'
-    const BACKEND_URL = '192.168.1.40:6300'
-    this.signalSocket = new ObservableSocket(`wss://${BACKEND_URL}/rtc/${roomId}/${code}`)
+    this.signalSocket = new ObservableSocket(`${config.rtcEndPoint}/${code}`)
     this.signalSocket.reconnect = false
     this.signalSocket.open$.subscribe(() => {
-      this.log('Socket open')
+      //alert('Socket open')
     })
 
     this.signalSocket.error$.subscribe(() => {
-      this.error('Socket error')
+      error('Socket error')
       this.props.history.push('/')
     })
 
     this.signalSocket.close$.subscribe(() => {
-      this.error('Socket disconnected')
+      error('Socket disconnected')
       this.props.history.push('/')
     })
 
     this.signalSocket.message$.subscribe(message => {
       switch (message.id) {
         case 'welcome':
-          this.props.publicationCameraAdd(message.participantId + '-camera')
-          this.props.publicationScreenAdd(message.participantId + '-screen')
+          const { id, ...rest } = message
+          console.log(rest)
+          this.setState({
+            presenter: rest
+          })
           break
         case 'publications':
           {
@@ -99,11 +115,11 @@ class Presenter extends PureComponent {
   }
 
   error(error) {
-    console.error(error)
+    error(error)
   }
 
   log(message) {
-    console.log(message)
+    alert(message)
   }
 
   myCameraPublication() {
@@ -121,7 +137,7 @@ class Presenter extends PureComponent {
     }
   }
   myScreenPublication() {
-    if (this.props.publications.camera) {
+    if (this.props.publications.screen) {
       return (
         <Publication
           key={this.props.publications.screen + '-pub'}
@@ -152,7 +168,7 @@ class Presenter extends PureComponent {
             socket={this.signalSocket}
             logging={this.logging}
             audio={this.props.cameraAudio}
-            video={this.props.cameraAideo}
+            video={this.props.cameraVideo}
             toggleAudio={toggleAudio}
             toggleVideo={toggleVideo}
           />
@@ -199,31 +215,52 @@ class Presenter extends PureComponent {
   }
 
   render() {
+    const presenter = this.state.presenter
+    const started = this.state.started
+    if (!presenter) {
+      return <p>.............loading.............</p>
+    }
+
     return (
-      <div className="card mt-5">
-        <div className="card-body">
-          <h5 className="card-title">Встреча &quot;{this.props.appointment.roomName}&quot; - ведущий</h5>
-          <div className="card-text">
-            {this.myCamera()}
-            {this.myScreen()}
-            {this.roomParticipantrs()}
-            {this.myCameraPublication()}
-            {this.myScreenPublication()}
+      <>
+        <nav className="navbar navbar-light bg-light mb-5">
+          <span className="navbar-brand mb-0 h1">
+            <span className="ml-2">{presenter.roomName}</span>
+          </span>
+          <span>
+            {!started && (
+              <button className="btn btn-link ml-2" onClick={this.onStart}>
+                <i className="fas fa-video mr-1" />
+                Начать вещание
+              </button>
+            )}
+            {started && (
+              <button className="btn btn-link ml-2" onClick={this.onStop}>
+                <i className="fas fa-video-slash mr-1" />
+                Прекрaтить вещание
+              </button>
+            )}
+          </span>
+        </nav>
+        {started && (
+          <div className="card mt-5">
+            <div className="card-body">
+              <div className="card-text">
+                {this.myCamera()}
+                {this.myScreen()}
+                {this.roomParticipantrs()}
+                {this.myCameraPublication()}
+                {this.myScreenPublication()}
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="card-footer">
-          <Link to="/" className="btn btn-secondary float-right">
-            Назад
-          </Link>
-        </div>
-      </div>
+        )}
+      </>
     )
   }
 }
 
 Presenter.propTypes = {
-  controlSocket: PropTypes.object,
-  appointment: PropTypes.object,
   history: PropTypes.object,
   match: PropTypes.object,
   publications: PropTypes.object,
@@ -248,8 +285,6 @@ Presenter.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    appointment: state.appointment,
-    controlSocket: state.controlSocket,
     publications: state.publications,
     subscriptions: state.subscriptions,
     cameraAudio: state.cameraAudio,

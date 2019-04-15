@@ -1,18 +1,18 @@
-import { combineReducers, createStore } from 'redux'
+import { compose, combineReducers, createStore } from 'redux'
 import reducers from './reducers'
+import persistState from 'redux-localstorage'
 
 const mainReducer = combineReducers({
-  masterCode: reducers.masterCodeReducer,
+  registration: reducers.registrationReducer,
   publications: reducers.publicationsReducer,
   subscriptions: reducers.subscriptionsReducer,
   cameraAudio: reducers.cameraAudioReducer,
   cameraVideo: reducers.cameraVideoReducer,
-  screenVideo: reducers.screenVideoReducer,
-  userName: reducers.usernameReducer,
-  appointment: reducers.appointmentReducer,
-  controlSocket: reducers.controlSocketReducer
+  screenVideo: reducers.screenVideoReducer
 })
 
-const store = createStore(mainReducer)
+const enhancer = compose(persistState())
+
+const store = createStore(mainReducer, enhancer)
 
 export default store

@@ -2,13 +2,11 @@ import { combineReducers, createStore } from 'redux'
 import reducers from './reducers'
 
 const mainReducer = combineReducers({
-  publication: reducers.publicationReducer,
+  publications: reducers.publicationsReducer,
   subscriptions: reducers.subscriptionsReducer,
-  audio: reducers.audioReducer,
-  video: reducers.videoReducer,
-  userName: reducers.usernameReducer,
-  appointment: reducers.appointmentReducer,
-  controlSocket: reducers.controlSocketReducer
+  cameraAudio: reducers.cameraAudioReducer,
+  cameraVideo: reducers.cameraVideoReducer,
+  screenVideo: reducers.screenVideoReducer
 })
 
 const store = createStore(mainReducer)

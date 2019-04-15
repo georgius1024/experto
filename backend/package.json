@@ -1,31 +1,50 @@
 {
-  "name": "koa-vc",
+  "name": "sequelize-start",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js",
-    "experts": "node experts.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc mocha ./tests/before.js ./tests/*.test.js --exit"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^7.0.0",
-    "koa": "^2.7.0",
+    "@koa/cors": "^2.2.2",
+    "dotenv": "^6.1.0",
+    "email-templates": "^4.0.4",
+    "jsonwebtoken": "^8.4.0",
+    "koa": "^2.6.2",
+    "koa-body": "^4.0.4",
     "koa-bodyparser": "^4.2.1",
+    "koa-compress": "^3.0.0",
+    "koa-jwt": "^3.5.1",
+    "koa-passport": "^4.1.1",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
-    "@koa/cors": "^2.2.2",
-    "moment": "^2.24.0",
+    "kurento-client": "a-sync/kurento-client-js",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.get": "^4.4.2",
+    "lodash.padend": "^4.6.1",
+    "lodash.pick": "^4.4.0",
+    "lodash.union": "^4.6.0",
+    "moment": "^2.22.2",
     "ms": "^2.1.1",
+    "nedb-promises": "^3.0.3",
+    "passport-local": "^1.0.0",
+    "pino": "^4.17.6",
+    "pug": "^2.0.3",
     "uuid": "^3.3.2",
-    "ws": "^6.2.1",
-    "kurento-client": "a-sync/kurento-client-js"
+    "ws": "^6.2.1"
   },
   "devDependencies": {
-    "inquirer": "^6.2.2"
+    "chalk": "^2.4.2",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.3.0",
+    "inquirer": "^6.2.2",
+    "sinon": "^7.1.1"
   }
 }

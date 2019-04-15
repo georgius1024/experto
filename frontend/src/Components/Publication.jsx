@@ -45,12 +45,7 @@ class Publication extends PureComponent {
 
   error(message) {
     if (this.props.logging) {
-      console.error(
-        'Publisher on channel',
-        this.props.channel,
-        'throws error',
-        message
-      )
+      console.error('Publisher on channel', this.props.channel, 'throws error', message)
     }
   }
 
@@ -74,21 +69,25 @@ class Publication extends PureComponent {
       .pipe(filter(message => message.channel === this.props.channel))
       .subscribe(message => {
         switch (message.id) {
-        case 'startResponseForPublisher':
-          this.log('SDP answer received from server. Connecting...')
-          this.webRtcPeer.processAnswer(message.sdpAnswer)
-          this.connected()
-          break
-        case 'error':
-          this.error('Error message from server', message.message)
-          break
-        case 'iceCandidateForPublisher':
-          this.webRtcPeer.addIceCandidate(message.candidate)
-          break
-        default:
+          case 'startResponseForPublisher':
+            this.log('SDP answer received from server. Connecting...')
+            this.webRtcPeer.processAnswer(message.sdpAnswer)
+            this.connected()
+            break
+          case 'error':
+            this.error('Error message from server', message.message)
+            break
+          case 'iceCandidateForPublisher':
+            this.webRtcPeer.addIceCandidate(message.candidate)
+            break
+          default:
         }
       })
-    this.publish()
+    if (this.props.device !== 'screen') {
+      this.publishCamera()
+    } else {
+      this.publishScreen()
+    }
   }
 
   connected() {
@@ -98,10 +97,22 @@ class Publication extends PureComponent {
     }
   }
 
-  publish() {
+  publishCamera() {
     const constraints = {
-      audio: true,
-      video: true
+      audio: {
+        mandatory: { echoCancellation: true }
+      },
+      video: {
+        mandatory: {
+          maxWidth: 800
+        }
+      }
+    }
+    if (this.props.cameraDeviceId) {
+      constraints.video.mandatory.sourceId = this.props.cameraDeviceId
+    }
+    if (this.props.microphoneDeviceId) {
+      constraints.audio.mandatory.sourceId = this.props.microphoneDeviceId
     }
 
     const options = {
@@ -125,26 +136,82 @@ class Publication extends PureComponent {
       }
     }
 
-    this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(
-      options,
-      error => {
+    this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, error => {
+      if (error) {
+        return this.error(error)
+      }
+      this.checkAudioEnabled()
+      this.checkVideoEnabled()
+      this.webRtcPeer.generateOffer((error, sdpOffer) => {
         if (error) {
           return this.error(error)
         }
-        this.checkAudioEnabled()
-        this.checkVideoEnabled()
-        this.webRtcPeer.generateOffer((error, sdpOffer) => {
-          if (error) {
-            return this.error(error)
-          }
-          this.log('Sending SDP offer')
-          this.sendMessage({
-            id: 'publish',
-            sdpOffer
-          })
+        this.log('Sending SDP offer')
+        this.sendMessage({
+          id: 'publish',
+          sdpOffer
         })
+      })
+    })
+  }
+
+  publishScreen() {
+    const constraints = {
+      audio: false,
+      video: {
+        mandatory: {
+          maxFrameRate: 7,
+          minFrameRate: 1,
+          chromeMediaSource: 'desktop'
+        }
       }
-    )
+    }
+
+    if (this.props.cameraDeviceId) {
+      constraints.video.mandatory.sourceId = this.props.cameraDeviceId
+    }
+    if (this.props.microphoneDeviceId) {
+      constraints.audio.mandatory.sourceId = this.props.microphoneDeviceId
+    }
+
+    const options = {
+      localVideo: this.video.current,
+      onicecandidate: candidate => {
+        this.log('Local candidate')
+        this.sendMessage({
+          id: 'onIceCandidateFromPublisher',
+          candidate
+        })
+      },
+      sendSource: 'screen',
+      mediaConstraints: constraints
+    }
+    if (this.props.stunServer) {
+      options.configuration = {
+        iceServers: [
+          {
+            url: 'stun:' + this.props.stunServer
+          }
+        ]
+      }
+    }
+
+    this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, error => {
+      if (error) {
+        return this.error(error)
+      }
+      this.checkVideoEnabled()
+      this.webRtcPeer.generateOffer((error, sdpOffer) => {
+        if (error) {
+          return this.error(error)
+        }
+        this.log('Sending SDP offer')
+        this.sendMessage({
+          id: 'publish',
+          sdpOffer
+        })
+      })
+    })
   }
 
   unpublish() {
@@ -157,10 +224,10 @@ class Publication extends PureComponent {
 
   checkAudioEnabled() {
     try {
-      const audioTracks = this.webRtcPeer.peerConnection
-        .getLocalStreams()[0]
-        .getAudioTracks()
-      audioTracks[0].enabled = this.props.audio
+      const audioTracks = this.webRtcPeer.peerConnection.getLocalStreams()[0].getAudioTracks()
+      if (audioTracks.length) {
+        audioTracks[0].enabled = this.props.audio
+      }
     } catch (error) {
       this.error(error)
     }
@@ -168,9 +235,7 @@ class Publication extends PureComponent {
 
   checkVideoEnabled() {
     try {
-      const videoTracks = this.webRtcPeer.peerConnection
-        .getLocalStreams()[0]
-        .getVideoTracks()
+      const videoTracks = this.webRtcPeer.peerConnection.getLocalStreams()[0].getVideoTracks()
       videoTracks[0].enabled = this.props.video
     } catch (error) {
       this.error(error)
@@ -196,6 +261,9 @@ Publication.propTypes = {
   socket: PropTypes.object.isRequired,
   stunServer: PropTypes.string,
   onConnected: PropTypes.func,
+  device: PropTypes.string,
+  cameraDeviceId: PropTypes.string,
+  microphoneDeviceId: PropTypes.string,
   audio: PropTypes.bool,
   video: PropTypes.bool,
   logging: PropTypes.bool
@@ -204,6 +272,7 @@ Publication.propTypes = {
 Publication.defaultProps = {
   audio: true,
   video: true,
+  device: 'camera',
   stunServer: '',
   logging: false
 }

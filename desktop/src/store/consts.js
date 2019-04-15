@@ -1,5 +1,7 @@
 const consts = {
-  MASTER_CODE_ADD: 'add_master_code',
+  REGISTER: 'register',
+  UNREGISTER: 'unregister',
+  REFRESH: 'refresh',
   PUBLICATION_CAMERA_ADD: 'publication-add-camera',
   PUBLICATION_CAMERA_REMOVE: 'publication-remove-camera',
   PUBLICATION_SCREEN_ADD: 'publication-add-screen',
@@ -15,9 +17,6 @@ const consts = {
   CAMERA_VIDEO_DISABLE: 'camera-video-disable',
   SCREEN_VIDEO_ENABLE: 'screen-video-enable',
   SCREEN_VIDEO_DISABLE: 'screen-video-disable',
-  USERNAME_UPDATE: 'username-add',
-  APPOINTMENT_UPDATE: 'appointment-update',
-  CONTROL_SOCKET_UPDATE: 'control-socket-update'
 }
 
 export default consts

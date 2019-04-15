@@ -1,9 +1,19 @@
 import consts from './consts'
 const reducers = {
-  masterCodeReducer(state = null, action) {
+  registrationReducer(state = { name: '', accessToken: '', refreshToken: '' }, action) {
     switch (action.type) {
-      case consts.MASTER_CODE_ADD:
-        return action.payload
+      case consts.REGISTER: {
+        const { name, accessToken, refreshToken } = action.payload
+        return { name, accessToken, refreshToken }
+      }
+      case consts.REFRESH: {
+        const { accessToken, refreshToken } = action.payload
+        return { name: state.name, accessToken, refreshToken }
+      }
+      case consts.UNREGISTER:
+        return { name: '', accessToken: '', refreshToken: '' }
+      default:
+        return state
     }
   },
   publicationsReducer(state = { camera: null, screen: null }, action) {
@@ -62,30 +72,6 @@ const reducers = {
         return true
       case consts.SCREEN_VIDEO_DISABLE:
         return false
-      default:
-        return state
-    }
-  },
-  usernameReducer(state = '', action) {
-    switch (action.type) {
-      case consts.USERNAME_UPDATE:
-        return action.payload
-      default:
-        return state
-    }
-  },
-  appointmentReducer(state = {}, action) {
-    switch (action.type) {
-      case consts.APPOINTMENT_UPDATE:
-        return action.payload
-      default:
-        return state
-    }
-  },
-  controlSocketReducer(state = null, action) {
-    switch (action.type) {
-      case consts.CONTROL_SOCKET_UPDATE:
-        return action.payload
       default:
         return state
     }

@@ -1,18 +1,23 @@
 $width: 320px;
 $height: 240px;
 
-%box {
+box4x3 {
   width: $width;
   height: $height;
 }
-.camera-subscription {
+
+box16x9 {
+  width: $width;
+  height: 180px;
+}
+
+.subscription {
   background-color: #d8d8d8;
   outline: 1px solid #8d8d8d;
-  @extend %box;
+  @extend box4x3;
   video {
-    @extend %box;
+    @extend box4x3;
     background-color: #d8d8d8;
-    background: url('../assets/default-poster.png');
     background-position: center center;
     background-size: contain;
   }
@@ -20,10 +25,18 @@ $height: 240px;
     display: none;
   }
   .overlay {
-    @extend %box;
+    @extend box4x3;
     background-color: rgba(0, 0, 0, 0.6);
     z-index: 1000;
     position: absolute;
+  }
+}
+
+.camera-subscription {
+  video {
+    background: url('../assets/default-poster.png');
+  }
+  .overlay {
     .unmute {
       left: 50% !important;
       top: 50% !important;
@@ -41,7 +54,7 @@ $height: 240px;
     }
   }
   .controls-panel {
-    @extend %box;
+    @extend box4x3;
     z-index: 2;
     position: absolute;
     justify-content: space-between;
@@ -70,19 +83,20 @@ $height: 240px;
   }
 }
 
-.camera-control-subscription {
-  background-color: #d8d8d8;
-  outline: 1px solid #8d8d8d;
-  @extend %box;
+.screen-subscription {
+  @extend box16x9;
   video {
-    @extend %box;
-    background-color: #d8d8d8;
+    @extend box16x9;
+    background: url('../assets/desktop16x9.png');
+  }
+}
+
+.camera-control-subscription {
+  video {
     background: url('../assets/default-poster.png');
-    background-position: center center;
-    background-size: contain;
   }
   .controls-panel {
-    @extend %box;
+    @extend box4x3;
     z-index: 2;
     position: absolute;
     justify-content: flex-end;

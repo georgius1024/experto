@@ -225,7 +225,9 @@ class Publication extends PureComponent {
   checkAudioEnabled() {
     try {
       const audioTracks = this.webRtcPeer.peerConnection.getLocalStreams()[0].getAudioTracks()
-      audioTracks[0].enabled = this.props.audio
+      if (audioTracks.length) {
+        audioTracks[0].enabled = this.props.audio
+      }
     } catch (error) {
       this.error(error)
     }

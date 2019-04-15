@@ -13,7 +13,6 @@ class ObservableSocket {
   }
 
   connect() {
-    console.trace()
     if (this.reconnectTimer) {
       clearInterval(this.reconnectTimer)
     }
