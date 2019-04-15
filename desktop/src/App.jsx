@@ -8,6 +8,7 @@ import ObservableSocket from './utils/observable-socket'
 import actions from './store/actions'
 
 import HomeView from './views/Home'
+import LoginView from './views/Login'
 import CreateAppointmentView from './views/CreateAppointment'
 import UpdateAppointmentView from './views/UpdateAppointment'
 
@@ -44,6 +45,7 @@ class App extends Component {
       this.setState({ socketConected: false })
       this.props.appointmentUpdate({})
       this.props.userNameUpdate('')
+      window.location.hash = '#/login' // <- ГРЯЗНЫЙ ХАК, УСТРАНИТЬ TODO
     })
 
     this.socket.close$.subscribe(() => {
@@ -211,6 +213,7 @@ class App extends Component {
           <HashRouter>
             <Switch>
               <Route exact path="/" component={HomeView} />
+              <Route path="/login" component={LoginView} />
               <Route path="/create" component={CreateAppointmentView} />
               <Route path="/update" component={UpdateAppointmentView} />
               <Route path="/presenter/:code" component={PresenterView} />

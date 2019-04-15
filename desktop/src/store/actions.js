@@ -9,6 +9,7 @@ function actionFactory(type) {
   }
 }
 const actions = {
+  masterCodeAdd: actionFactory(consts.MASTER_CODE_ADD),
   publicationCameraAdd: actionFactory(consts.PUBLICATION_CAMERA_ADD),
   publicationCameraRemove: actionFactory(consts.PUBLICATION_CAMERA_REMOVE),
   publicationScreenAdd: actionFactory(consts.PUBLICATION_SCREEN_ADD),

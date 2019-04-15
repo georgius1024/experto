@@ -1,5 +1,11 @@
 import consts from './consts'
 const reducers = {
+  masterCodeReducer(state = null, action) {
+    switch (action.type) {
+      case consts.MASTER_CODE_ADD:
+        return action.payload
+    }
+  },
   publicationsReducer(state = { camera: null, screen: null }, action) {
     switch (action.type) {
       case consts.PUBLICATION_CAMERA_ADD:

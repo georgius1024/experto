@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
+    "experts": "node experts.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -23,5 +24,8 @@
     "uuid": "^3.3.2",
     "ws": "^6.2.1",
     "kurento-client": "a-sync/kurento-client-js"
+  },
+  "devDependencies": {
+    "inquirer": "^6.2.2"
   }
 }

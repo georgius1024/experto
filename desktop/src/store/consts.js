@@ -1,4 +1,5 @@
 const consts = {
+  MASTER_CODE_ADD: 'add_master_code',
   PUBLICATION_CAMERA_ADD: 'publication-add-camera',
   PUBLICATION_CAMERA_REMOVE: 'publication-remove-camera',
   PUBLICATION_SCREEN_ADD: 'publication-add-screen',

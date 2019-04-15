@@ -34,8 +34,8 @@ class ApiController {
     }
   }
 
-  createRoom(roomId, roomName) {
-    const room = new RoomController(roomId, roomName)
+  createRoom(roomId, roomName, userId) {
+    const room = new RoomController(roomId, roomName, userId)
     this.Rtc.attach(room, roomId)
     return roomId
   }
@@ -107,7 +107,7 @@ class ApiController {
     return { id, name, registrations }
   }
 
-  join(socket, sessionId, userName) {
+  join(socket, sessionId, userName, userId) {
     this.lastActivity = new Date()
     this.log(`${sessionId} connected`)
     const participant = new RoomParticipant(sessionId, userName, 'presenter', socket)
@@ -122,7 +122,7 @@ class ApiController {
         {
           // TODO VALIDATE MESSAGE: roomName, personName, personEmail is required
           const roomId = uuidv1()
-          if (this.createRoom(roomId, message.roomName)) {
+          if (this.createRoom(roomId, message.roomName, userId)) {
             this.registerPerson(roomId, participant.role, participant.name)
             this.registerPerson(roomId, 'listener', message.personName, message.personEmail)
             this.registerPerson(roomId, 'guest')
@@ -144,7 +144,7 @@ class ApiController {
         {
           // TODO VALIDATE MESSAGE: roomName is required
           const roomId = uuidv1()
-          if (this.createRoom(roomId, message.roomName)) {
+          if (this.createRoom(roomId, message.roomName, userId)) {
             participant.sendMessage('report', { data: this.reportRoom(roomId) })
           }
         }

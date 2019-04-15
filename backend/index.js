@@ -4,7 +4,7 @@ const fs = require('fs')
 const https = require('https')
 const os = require('os')
 
-const uuidv1 = require('uuid/v1')
+const uuidv4 = require('uuid/v4')
 const Koa = require('koa')
 const cors = require('@koa/cors')
 const serve = require('koa-static')
@@ -14,7 +14,7 @@ const errorHandler = require('./src/error-handler')
 const router = require('./src/router')
 const ApiController = require('./src/classes/api-controller')
 const RoomPool = require('./src/classes/room-pool')
-
+const experts = require('./src/db/experts')
 const { getKurentoClient$ } = require('./src/utils/kurento-calls')
 const app = new Koa()
 const ws = require('ws')
@@ -55,11 +55,10 @@ socketServer.on('connection', function connection(socket, request) {
   }
   const [, endpoint, roomCode, registrationCode] = request.url.split('/')
   if (endpoint === 'api') {
-    // TODO AUTH API ENDPOINT
-    if (roomCode === 'master') {
-      console.log(`Accepted ${endpoint} connection`)
-      const userName = 'Пьятта Чиабатта'
-      Api.join(socket, uuidv1(), userName)
+    const expert = experts.findById(roomCode)
+    if (expert) {
+      console.log(`Accepted ${endpoint} connection from ${expert.name}`)
+      Api.join(socket, uuidv4(), expert.name, expert.id)
     } else {
       return sendError('wrong auth code: ' + roomCode)
     }
@@ -78,7 +77,7 @@ socketServer.on('connection', function connection(socket, request) {
     }
     const registration = controller.registrations[role]
     console.log(`Accepted ${endpoint} connection to ${roomCode} for ${role} ${registration.name}`)
-    controller.join(socket, uuidv1(), role, registration.name || 'Гость')
+    controller.join(socket, uuidv4(), role, registration.name || 'Гость')
   } else {
     return sendError('wrong endpoint: ' + endpoint)
   }

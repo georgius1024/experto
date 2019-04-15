@@ -2,6 +2,7 @@ import { combineReducers, createStore } from 'redux'
 import reducers from './reducers'
 
 const mainReducer = combineReducers({
+  masterCode: reducers.masterCodeReducer,
   publications: reducers.publicationsReducer,
   subscriptions: reducers.subscriptionsReducer,
   cameraAudio: reducers.cameraAudioReducer,

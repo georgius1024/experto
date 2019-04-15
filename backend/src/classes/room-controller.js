@@ -4,9 +4,10 @@ const RoomPublication = require('./room-publication')
 const RoomSubscription = require('./room-subscription')
 // TODO create LOG, TRACE, DEBUG, ERROR funcs
 class RoomController {
-  constructor(id, roomName) {
+  constructor(id, roomName, userId) {
     this.id = id
     this.name = roomName
+    this.userId = userId
     this.participants = {}
     this.registrations = {}
     this.lastActivity = new Date()
@@ -25,6 +26,7 @@ class RoomController {
   report() {
     return {
       id: this.id,
+      userId: this.id,
       name: this.name,
       registrations: this.registrations,
       participants: Object.keys(this.participants).map(key => this.participants[key].report()),
