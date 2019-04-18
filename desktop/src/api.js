@@ -81,8 +81,10 @@ const Api = {
         error: error => this.error(error)
       })
     } else {
-      this.clearAccessToken()
-      this.clearRefreshToken()
+      store.dispatch(actions.refresh({
+        accessToken: '',
+        refreshToken : ''
+      }))
     }
   },
 
