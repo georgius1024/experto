@@ -7,7 +7,8 @@ import ObservableSocket from '../utils/observable-socket'
 import { CameraSubscription, ScreenSubscription, CameraControlSubscription } from '../components/subscription'
 import Publication from '../components/publication'
 import config from '../config'
-import { alert, error } from '../components/alert'
+import Chat from '../components/chat'
+import { error } from '../notification'
 const electron = window.require('electron')
 // TODO LOGGING
 const getScreenConstraints = (src, callback) => {
@@ -38,11 +39,13 @@ class Presenter extends PureComponent {
     super(props)
     this.state = {
       presenter: null,
-      started: false
+      started: false,
+      chat: []
     }
     this.subscription = null
     this.onStart = this.onStart.bind(this)
     this.onStop = this.onStop.bind(this)
+    this.onPostMessage = this.onPostMessage.bind(this)
   }
   componentDidMount() {
     this.connect()
@@ -68,6 +71,9 @@ class Presenter extends PureComponent {
   onStop() {
     this.props.history.push('/')
   }
+  onPostMessage(body) {
+    this.signalSocket.sendMessage('message', { body })
+  }
   connect() {
     console.log('New connection')
     const code = this.props.match.params.code
@@ -89,25 +95,35 @@ class Presenter extends PureComponent {
 
     this.signalSocket.message$.subscribe(message => {
       switch (message.id) {
-        case 'welcome':
+      case 'welcome':
+        const { id, chat = [], ...rest } = message
+        this.setState({
+          presenter: rest,
+          chat
+        })
+        break
+      case 'message':
+        {
           const { id, ...rest } = message
-          console.log(rest)
+          const chat = [...this.state.chat]
+          chat.push(rest)
           this.setState({
-            presenter: rest
+            chat
           })
-          break
-        case 'publications':
-          {
-            const subscriptions = []
-            message.data.forEach(publisher =>
-              publisher.channels.forEach(channel => {
-                subscriptions.push({ channel, name: publisher.name })
-              })
-            )
-            this.props.subscriptionsUpdateAll(subscriptions)
-          }
-          break
-        default:
+        }
+        break
+      case 'publications':
+        {
+          const subscriptions = []
+          message.data.forEach(publisher =>
+            publisher.channels.forEach(channel => {
+              subscriptions.push({ channel, name: publisher.name })
+            })
+          )
+          this.props.subscriptionsUpdateAll(subscriptions)
+        }
+        break
+      default:
       }
     })
     this.logging = process.env.NODE_ENV !== 'production'
@@ -213,7 +229,9 @@ class Presenter extends PureComponent {
         )
       })
   }
-
+  myChat() {
+    return <Chat messages={this.state.chat} onPostMessage={this.onPostMessage} />
+  }
   render() {
     const presenter = this.state.presenter
     const started = this.state.started
@@ -242,6 +260,8 @@ class Presenter extends PureComponent {
             )}
           </span>
         </nav>
+        {this.myChat()}
+
         {started && (
           <div className="card mt-5">
             <div className="card-body">

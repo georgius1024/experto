@@ -81,10 +81,12 @@ const Api = {
         error: error => this.error(error)
       })
     } else {
-      store.dispatch(actions.refresh({
-        accessToken: '',
-        refreshToken : ''
-      }))
+      store.dispatch(
+        actions.refresh({
+          accessToken: '',
+          refreshToken: ''
+        })
+      )
     }
   },
 

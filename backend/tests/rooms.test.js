@@ -89,10 +89,12 @@ describe('Rooms CRUD', async () => {
   })
 
   it('Can create room', async () => {
+    const date = new Date().toISOString()
     const sampleData = {
       roomName,
       listenerName,
-      listenerEmail
+      listenerEmail,
+      date, 
     }
     response = await requester
     .post('/api/rooms' )
@@ -104,7 +106,6 @@ describe('Rooms CRUD', async () => {
     assert.isObject(response.body.data)
     assert.isOk(response.body.data._id)
     room = response.body.data
-
   })
   it('can read room', async () => {
     response = await requester
@@ -113,6 +114,7 @@ describe('Rooms CRUD', async () => {
     assert.equal(response.status, 200)
     assert.equal(response.body.status, 'success')
     assert.isObject(response.body.data)
+    delete response.body.data['lastActivity']
     assert.deepEqual(response.body.data, room)
   })
   it('can list rooms', async () => {
@@ -123,20 +125,9 @@ describe('Rooms CRUD', async () => {
     assert.equal(response.body.status, 'success')
     assert.isArray(response.body.data)
     assert.isObject(response.body.meta)
+    delete response.body.data[0]['lastActivity']
     assert.deepEqual(response.body.data[0], room)
     assert.deepEqual(response.body.meta, {total: 1, from : 0, to: 0})
-  })
-
-  it ('can find room by listener code', async () => {
-    const instance = await roomsDb.findByListenerCode(room.listenerCode)
-    assert.isObject(instance)
-    assert.deepEqual(instance, room)
-  })
-
-  it ('can find room by guest code', async () => {
-    const instance = await roomsDb.findByGuestCode(room.guestCode)
-    assert.isObject(instance)
-    assert.deepEqual(instance, room)
   })
 
   it('can update room', async () => {

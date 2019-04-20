@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { withRouter } from 'react-router-dom'
 import Card from 'react-bootstrap/Card'
 import { RoomForm, roomModel } from '../components/room-form'
+import DefaultLayout from '../layouts/default'
 import Api from '../api'
 
 class CreateRoom extends PureComponent {
@@ -28,14 +29,16 @@ class CreateRoom extends PureComponent {
   render() {
     const first = this.props.match.path.includes('first')
     return (
-      <div className="v-layout">
-        <Card>
-          <Card.Header>Создание новой комнаты</Card.Header>
-          <Card.Body>
-            <RoomForm onCancel={!first && this.onCancel} onSubmit={this.onSubmit} model={this.state.model} />
-          </Card.Body>
-        </Card>
-      </div>
+      <DefaultLayout>
+        <div className="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
+          <Card>
+            <Card.Header className="bg-primary text-white">Создание новой встречи</Card.Header>
+            <Card.Body>
+              <RoomForm onCancel={!first && this.onCancel} onSubmit={this.onSubmit} model={this.state.model} />
+            </Card.Body>
+          </Card>
+        </div>
+      </DefaultLayout>
     )
   }
 }

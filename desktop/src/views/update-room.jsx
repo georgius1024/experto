@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { withRouter } from 'react-router-dom'
 import Card from 'react-bootstrap/Card'
 import { RoomForm, roomModel } from '../components/room-form'
+import DefaultLayout from '../layouts/default'
 import Api from '../api'
 
 class UpdateRoom extends PureComponent {
@@ -48,14 +49,16 @@ class UpdateRoom extends PureComponent {
 
   render() {
     return (
-      <div className="v-layout">
-        <Card>
-          <Card.Header>Правка комнаты</Card.Header>
-          <Card.Body>
-            <RoomForm onCancel={this.onCancel} onSubmit={this.onSubmit} model={this.state.model} />
-          </Card.Body>
-        </Card>
-      </div>
+      <DefaultLayout>
+        <div className="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
+          <Card>
+            <Card.Header className="bg-primary text-white">Редактирование встречи</Card.Header>
+            <Card.Body>
+              <RoomForm onCancel={this.onCancel} onSubmit={this.onSubmit} model={this.state.model} />
+            </Card.Body>
+          </Card>
+        </div>
+      </DefaultLayout>
     )
   }
 }

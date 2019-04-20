@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react'
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import { ToastContainer } from 'react-toastify'
 import { connect } from 'react-redux'
-
-import Alert from './components/alert'
-import Loading from './components/loading'
+import AppHeader from './components/app-header'
+import Spinner from './components/spinner'
 import PrivateRoute from './components/private-route'
 import MainView from './views/main'
 import RegisterView from './views/register'
@@ -13,17 +13,19 @@ import UpdateRoomView from './views/update-room'
 import PresenterView from './views/presenter'
 import ErrorView from './views/404'
 
-import './assets/bootstrap.css'
+import './assets/bootstrap.min.css'
 import '@fortawesome/fontawesome-free/css/all.css'
+import 'react-toastify/dist/ReactToastify.css'
 import './App.scss'
 
 class App extends PureComponent {
   render() {
     return (
-      <div className="container full-height">
-        <Loading />
-        <Alert />
+      <>
         <MemoryRouter>
+          <Spinner />
+          <ToastContainer />
+          <AppHeader />
           <Switch>
             <PrivateRoute exact path="/" component={MainView} registered={this.props.registered} />
             <PrivateRoute exact path="/create-first" component={CreateRoomView} registered={this.props.registered} />
@@ -34,7 +36,7 @@ class App extends PureComponent {
             <Route path="*" component={ErrorView} />
           </Switch>
         </MemoryRouter>
-      </div>
+      </>
     )
   }
 }

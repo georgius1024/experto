@@ -40,7 +40,7 @@ router.post('/', async ctx => {
   const userId = _get(ctx, 'state.token._id', 0)
   const userName = _get(ctx, 'state.token.name')
   try {
-    const fields = _pick(ctx.request.body, ['roomName', 'listenerName', 'listenerEmail'])
+    const fields = _pick(ctx.request.body, ['roomName', 'listenerName', 'listenerEmail', 'date'])
     fields.presenterId = userId
     fields.presenterName = userName
     fields.presenterCode = uuid()
@@ -70,7 +70,7 @@ router.put('/:_id', async ctx => {
     if (room.presenterId !== userId) {
       return Response.forbidden(ctx)
     }
-    const fields = _pick(ctx.request.body, ['roomName', 'listenerName', 'listenerEmail'])
+    const fields = _pick(ctx.request.body, ['roomName', 'listenerName', 'listenerEmail', 'date'])
     const combined = { ...room, ...fields }
 
     const validation = roomsDb.validRoom(combined)

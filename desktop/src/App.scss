@@ -1,4 +1,5 @@
-body, html {
+body,
+html {
   height: 100%;
 }
 
@@ -11,10 +12,25 @@ body, html {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
+
 .no-user-select {
   user-select: none;
 }
+
 .handle-cursor {
   cursor: pointer;
+}
+
+.w-20em {
+  width: 20em;
+}
+
+.w-10em {
+  width: 10em;
+}
+
+.w-15em {
+  width: 15em;
 }

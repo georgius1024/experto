@@ -8,7 +8,8 @@ const roomModel = {
   _id: 'new',
   roomName: '',
   listenerName: '',
-  listenerEmail: ''
+  listenerEmail: '',
+  date: ''
 }
 
 class RoomForm extends PureComponent {
@@ -142,6 +143,20 @@ class RoomForm extends PureComponent {
     return (
       <Form onSubmit={this.onSubmit}>
         <Form.Group>
+          <Form.Label>Время встречи</Form.Label>
+          <Form.Control
+            type="datetime-local"
+            name="date"
+            plaintext={plainText}
+            readOnly={readOnly}
+            value={model['date']}
+            onChange={this.onChange}
+            placeholder="Выберите время встречи"
+            required
+          />
+          <div className="error-text">{errors['date']}</div>
+        </Form.Group>
+        <Form.Group>
           <Form.Label>Название комнаты</Form.Label>
           <Form.Control
             name="roomName"
@@ -152,6 +167,7 @@ class RoomForm extends PureComponent {
             type="text"
             maxLength="40"
             placeholder="Введите название"
+            required
           />
           <div className="error-text">{errors['roomName']}</div>
         </Form.Group>
@@ -167,12 +183,13 @@ class RoomForm extends PureComponent {
             type="text"
             maxLength="40"
             placeholder="Введите ФИО"
+            required
           />
           <div className="error-text">{errors['listenerName']}</div>
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>Email</Form.Label>
+          <Form.Label>Email слушателя</Form.Label>
           <Form.Control
             name="listenerEmail"
             value={model['listenerEmail']}
@@ -181,19 +198,22 @@ class RoomForm extends PureComponent {
             onChange={this.onChange}
             type="email"
             placeholder="Введите email"
+            required
           />
           <div className="error-text">{errors['listenerEmail']}</div>
         </Form.Group>
-        {hasSubmitButton && (
-          <Button variant="primary" disabled={errorCount} type="submit">
-            Сохранить
-          </Button>
-        )}
-        {hasCancelButton && (
-          <Button variant="secondary" onClick={this.onCancel} type="button" className="float-right">
-            Отмена
-          </Button>
-        )}
+        <div className="text-right">
+          {hasSubmitButton && (
+            <Button variant="primary" disabled={errorCount} type="submit" className="w-10em mr-4">
+              Сохранить
+            </Button>
+          )}
+          {hasCancelButton && (
+            <Button variant="secondary" onClick={this.onCancel} type="button" className="w-10em">
+              Отмена
+            </Button>
+          )}
+        </div>
         <Prompt when={formIsDirty} message="Точно-точно, прямо точно?" />
       </Form>
     )

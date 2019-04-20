@@ -52,7 +52,7 @@ describe('login', async () => {
       .send({
         code: wrongCode
       })
-    assert.equal(response.status, 404)
+    assert.equal(response.status, 403)
   })
 
   it('Can login traditional way with correct code', async () => {

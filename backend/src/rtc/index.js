@@ -25,7 +25,7 @@ function serve(server) {
     if (!controller) {
       return sendError('wrong code: ' + code)
     }
-    logger.trace(`RTC: Accepted connection to ${controller.name} for ${role} ${name}`)
+    logger.trace(`RTC: Accepted connection to ${controller.room.roomName} for ${role} ${name}`)
     controller.join(socket, uuid(), role, name)
   })
 }

@@ -22,6 +22,9 @@ function validRoom(data) {
   if (!data.listenerName) {
     return 'Нет имени слушателя'
   }
+  if (!data.date) {
+    return 'Нет даты встречи'
+  }
   if (!validEmail(data.listenerEmail)) {
     return 'Недопустимый email слушателя'
   }

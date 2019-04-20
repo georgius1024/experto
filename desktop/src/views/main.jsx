@@ -1,16 +1,19 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import moment from 'moment'
+import 'moment/locale/ru'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import Card from 'react-bootstrap/Card'
+import Pagination from 'react-bootstrap/Pagination'
 import Button from 'react-bootstrap/Button'
+import CopyInput from '../components/copy-input'
 import actions from '../store/actions'
 import Api from '../api'
-import { RoomForm } from '../components/room-form'
-import RoomList from '../components/room-list'
 import ConfirmDialog from '../components/confirm-dialog'
+import { message } from '../notification'
 import config from '../config'
 const key = 'last-selected-room'
+moment.locale('ru')
 
 class Main extends PureComponent {
   constructor(props) {
@@ -28,12 +31,11 @@ class Main extends PureComponent {
     this.onConfirmDelete = this.onConfirmDelete.bind(this)
     this.onCancelDelete = this.onCancelDelete.bind(this)
     this.onStart = this.onStart.bind(this)
+    this.onMoveNext = this.onMoveNext.bind(this)
+    this.onMovePrev = this.onMovePrev.bind(this)
   }
   componentDidMount() {
     this.fetch()
-  }
-  componentDidUpdate() {
-    // this.fetch()
   }
   fetch() {
     Api.get('api/rooms').subscribe(({ data: body }) => {
@@ -52,6 +54,39 @@ class Main extends PureComponent {
       }
     })
   }
+  canMoveNext() {
+    const selectedId = this.state.selectedRoom && this.state.selectedRoom._id
+    const rooms = this.state.rooms
+    const current = rooms.findIndex(e => e._id === selectedId)
+    return current < rooms.length - 1
+  }
+  onMoveNext() {
+    const selectedId = this.state.selectedRoom && this.state.selectedRoom._id
+    const rooms = this.state.rooms
+    const current = rooms.findIndex(e => e._id === selectedId)
+    if (current < rooms.length - 1) {
+      this.setState({
+        selectedRoom: rooms[current + 1]
+      })
+    }
+  }
+  canMovePrev() {
+    const selectedId = this.state.selectedRoom && this.state.selectedRoom._id
+    const rooms = this.state.rooms
+    const current = rooms.findIndex(e => e._id === selectedId)
+    return current > 0
+  }
+  onMovePrev() {
+    const selectedId = this.state.selectedRoom && this.state.selectedRoom._id
+    const rooms = this.state.rooms
+    const current = rooms.findIndex(e => e._id === selectedId)
+    if (current > 0) {
+      this.setState({
+        selectedRoom: rooms[current - 1]
+      })
+    }
+  }
+
   doUnregister() {
     Api.get('private/logout').subscribe(() => this.props.unregister())
   }
@@ -95,73 +130,65 @@ class Main extends PureComponent {
     if (!this.state.selectedRoom) {
       return null
     }
+    const room = this.state.selectedRoom
+
     return (
-      <Card className="mb-5">
-        <Card.Body>
-          <RoomForm model={this.state.selectedRoom} readOnly={true} />
-          <p>
-            <a
-              href={config.public + '/room/' + this.state.selectedRoom.listenerCode}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Ссылка для слушателя
-            </a>
-          </p>
-          <p>
-            <a
-              href={config.public + '/room/' + this.state.selectedRoom.guestCode}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Ссылка для гостя
-            </a>
-          </p>
-          <hr className="my-3" />
-          <Button variant="primary" onClick={this.onStart}>
-            Начать встречу
+      <div className="p-5">
+        <h1>{room.roomName}</h1>
+        <dl className="row mt-3">
+          <dt className="col-sm-3 pb-2">Время</dt>
+          <dd className="col-sm-9">
+            {moment(room.date).format('MM.DD.YY HH:mm')}
+            <span className="text-muted ml-2">({moment(room.date).fromNow()})</span>
+          </dd>
+          <dt className="col-sm-3 pt-2">Слушатель</dt>
+          <dd className="col-sm-9">
+            <CopyInput value={room.listenerName} />
+          </dd>
+          <dt className="col-sm-3 pt-2">Ссылка для слушателя</dt>
+          <dd className="col-sm-9">
+            <CopyInput value={config.public + '/room/' + this.state.selectedRoom.listenerCode} />
+          </dd>
+          <dt className="col-sm-3 pt-2">Ссылка для гостя</dt>
+          <dd className="col-sm-9">
+            <CopyInput value={config.public + '/room/' + this.state.selectedRoom.guestCode} />
+          </dd>
+        </dl>
+        <hr className="my-3" />
+        <div className="d-flex">
+          <Pagination className="m-0">
+            <Pagination.Prev onClick={this.onMovePrev} disabled={!this.canMovePrev()} />
+            <Pagination.Next onClick={this.onMoveNext} disabled={!this.canMoveNext()} />
+          </Pagination>
+          <Button variant="primary" className="ml-2 w-10em" onClick={this.onStart}>
+            <i className="fa fa-video" /> Начать
           </Button>
-          <Button variant="secondary" onClick={this.onCreate} className="ml-3">
+          <Button variant="primary" className="ml-3">
+            <i className="fa fa-envelope ml-2" /> Пригласить
+          </Button>
+
+          <Button variant="secondary" onClick={this.onCreate} className="ml-3 w-10em">
             Создать
           </Button>
-          <Button variant="secondary" onClick={this.onUpdate} className="ml-3">
+          <Button variant="secondary" onClick={this.onUpdate} className="ml-3 w-10em">
             Редактировать
           </Button>
-          <Button variant="danger" onClick={this.onDelete} className="float-right">
+
+          <Button variant="danger" onClick={this.onDelete} className="ml-3 w-10em">
             Удалить
           </Button>
-        </Card.Body>
-      </Card>
+        </div>
+      </div>
     )
   }
   render() {
     return (
       <>
-        <nav className="navbar navbar-light bg-light mb-5">
-          <a href="#/" className="navbar-brand mb-0 h1">
-            <span className="ml-2">APP-X</span>
-          </a>
-          <span>
-            {this.props.registered && (
-              <>
-                {this.props.registration.name}
-                <button className="btn btn-link ml-2" onClick={this.doUnregister}>
-                  <i className="fas fa-sign-out-alt mr-1" />
-                  Выйти
-                </button>
-              </>
-            )}
-            {!this.props.registered && <span>Not logged</span>}
-          </span>
-        </nav>
         {this.selectedRoom()}
-        {this.state.rooms.length && (
-          <RoomList rooms={this.state.rooms} selected={this.state.selectedRoom} onSelect={this.onSelect} />
-        )}
         <ConfirmDialog
           active={this.state.confirmDelete}
           caption={'Подтверждение'}
-          body={'Подтвердите удаление комнаты'}
+          body={'Подтвердите удаление встречи'}
           onConfirm={this.onConfirmDelete}
           onCancel={this.onCancelDelete}
         />

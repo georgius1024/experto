@@ -83,7 +83,6 @@ class RoomPool {
   }
 
   find(code) {
-    console.log(this.index[code])
     if (this.index[code]) {
       const { id, name, role } = this.index[code]
       const controller = this.pool[id]

@@ -10,7 +10,9 @@ class RoomController {
     this.id = room._id
     this.room = room
     this.participants = {}
-    this.updateLastActivity()
+    if (!this.room.lastActivity) {
+      this.updateLastActivity()
+    }
     this.log('created')
   }
 
@@ -23,6 +25,18 @@ class RoomController {
     roomsDb.updateLastActivity(this.id)
   }
 
+  pushChatMessage(message, from) {
+    if (!this.room.chat) {
+      this.room.chat = []
+    }
+    this.room.chat.push({
+      message,
+      from,
+      at: new Date()
+    })
+    roomsDb.update(this.room)
+  }
+
   log(message) {
     logger.trace(`Room ${this.id}: ${message}`)
   }
@@ -32,11 +46,12 @@ class RoomController {
   }
 
   report() {
-    const { _id: id, lastActivity, ...room } = this.room
+    const { _id: id, lastActivity, chat, ...room } = this.room
     return {
       id,
       room,
       participants: Object.keys(this.participants).map(key => this.participants[key].report()),
+      chat: chat ? chat.length : undefined,
       lastActivity: moment(lastActivity).fromNow(),
       lastActivityAt: moment(lastActivity).format('YYYY-MM-DD HH:mm:ss.SSS')
     }
@@ -55,7 +70,13 @@ class RoomController {
     this.log(`${participantId} connected`)
     const participant = new RoomParticipant(participantId, userName, role, socket)
     this.attach(participant, participantId)
-    participant.sendMessage('welcome', { participantId, role, userName, roomName: this.room.roomName })
+    participant.sendMessage('welcome', {
+      participantId,
+      role,
+      userName,
+      roomName: this.room.roomName,
+      chat: this.room.chat
+    })
     if (['presenter', 'listener'].includes(role)) {
       // only 1 presenter and listener in room
       const keys = Object.keys(this.participants)
@@ -142,6 +163,10 @@ class RoomController {
             delete participant.subscriptions[channel]
           }
           break
+        case 'message':
+          this.pushChatMessage(message.body, participant.name)
+          this.broadCastChatMessage(message.body, participant.name)
+          break
         case 'ping':
         case 'pong':
           participant.sendMessage(message.id === 'ping' ? 'pong' : 'ping')
@@ -198,6 +223,14 @@ class RoomController {
   broadcastMessage(id, payload, excluded = []) {
     const data = JSON.stringify({ id, ...payload })
     this.broadcast(data, excluded)
+  }
+
+  broadCastChatMessage(message, from) {
+    const payload = {
+      message,
+      from
+    }
+    this.broadcastMessage('message', payload)
   }
 
   attach(participant, id) {

@@ -52,28 +52,29 @@ class Register extends PureComponent {
   render() {
     return (
       <div className="v-layout">
-        <Card>
-          <Card.Header>Register your app</Card.Header>
-          <Card.Body>
-            <Form className="card-text">
-              <Form.Group>
-                <Form.Label>Enter your registration code</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows="4"
-                  placeholder="Enter registration code"
-                  value={this.state.registrationCode}
-                  onChange={this.updateRegistrationCode}
-                />
-              </Form.Group>
-            </Form>
-            <footer>
-              <Button variant="primary" onClick={this.doRegister}>
-              Register
-              </Button>
-            </footer>
-          </Card.Body>
-        </Card>
+        <div className="col-lg-6 col-md-8">
+          <Card>
+            <Card.Header>Регистрация эксперта</Card.Header>
+            <Card.Body>
+              <Form className="card-text">
+                <Form.Group>
+                  <Form.Label>Регистрационный код</Form.Label>
+                  <Form.Control
+                    placeholder="Введите код"
+                    value={this.state.registrationCode}
+                    onChange={this.updateRegistrationCode}
+                  />
+                </Form.Group>
+              </Form>
+              <p className="text-muted">Откройте присланное Вам письмо и найдите в нем свой регистрационный код.</p>
+              <footer className="text-center">
+                <Button variant="primary" className="w-10em" onClick={this.doRegister}>
+                  Дальше
+                </Button>
+              </footer>
+            </Card.Body>
+          </Card>
+        </div>
       </div>
     )
   }
