@@ -1,0 +1,15 @@
+Toastify__toast--info {
+  background: #3498db;
+}
+
+Toastify__toast--success {
+  background: #18bc9c;
+}
+
+Toastify__toast--warning {
+  background: #f39c12;
+}
+
+Toastify__toast--error {
+  background: #e74c3c;
+}

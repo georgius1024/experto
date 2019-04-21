@@ -8,7 +8,7 @@ function ChatList({ messages, reverse }) {
     const time = moment(at).format('HH:mm:ss')
     const key = moment(at).valueOf()
     return (
-      <ListGroup.Item key={key}>
+      <ListGroup.Item key={time}>
         <div>
           <b>
             {time} - {from}

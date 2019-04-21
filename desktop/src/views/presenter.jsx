@@ -63,7 +63,6 @@ class Presenter extends PureComponent {
     this.signalSocket.disconnect()
   }
   onStop() {
-    this.signalSocket.disconnect()
     this.props.history.push('/')
   }
   onPostMessage(body) {
