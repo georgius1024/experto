@@ -70,7 +70,6 @@ class Presenter extends PureComponent {
     this.signalSocket.sendMessage('message', { body })
   }
   connect() {
-    console.log('New connection')
     const code = this.props.match.params.code
     this.signalSocket = new ObservableSocket(`${config.rtcEndPoint}/${code}`)
     this.signalSocket.reconnect = false
