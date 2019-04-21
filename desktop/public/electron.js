@@ -5,7 +5,7 @@ app.commandLine.appendSwitch('ignore-certificate-errors', '1')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
 const path = require('path')
 const isDev = require('electron-is-dev')
-let mainWindow, popupWindow
+let mainWindow
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer')
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS']
@@ -55,47 +55,6 @@ async function createMainWindow() {
     }
   })
   mainWindow.on('closed', () => (mainWindow = null))
-  process.createPopupWindow = createPopupWindow
-}
-
-async function createPopupWindow(code) {
-  popupWindow = new BrowserWindow({
-    parent: mainWindow,
-    modal: true,
-    width: 900,
-    height: 680,
-    show: false,
-    webPreferences: {
-      nodeIntegration: true,
-      backgroundThrottling: false,
-      webSecurity: false
-    }
-  })
-  popupWindow.maximize()
-  popupWindow.loadURL(
-    isDev
-      ? 'http://localhost:7000?presenter=' + code
-      : `file://${path.join(__dirname, '../build/index.html?presenter=' + code)}`
-  )
-  popupWindow.webContents.once('did-finish-load', () => {
-    popupWindow.show()
-    if (isDev) {
-      // Open the DevTools.
-      popupWindow.webContents.openDevTools()
-      // add inspect element on right click menu
-      popupWindow.webContents.on('context-menu', (e, props) => {
-        Menu.buildFromTemplate([
-          {
-            label: 'Inspect element',
-            click() {
-              popupWindow.inspectElement(props.x, props.y)
-            }
-          }
-        ]).popup(popupWindow)
-      })
-    }
-  })
-  popupWindow.on('closed', () => (popupWindow = null))
 }
 
 app.on('ready', createMainWindow)

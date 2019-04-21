@@ -11,7 +11,7 @@ const mainReducer = combineReducers({
   screenVideo: reducers.screenVideoReducer
 })
 
-const enhancer = compose(persistState())
+const enhancer = compose(persistState(['registration'], { key: 'experto' }))
 
 const store = createStore(mainReducer, enhancer)
 

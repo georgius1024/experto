@@ -1,14 +1,16 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { withRouter, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import actions from '../store/actions'
 import ObservableSocket from '../utils/observable-socket'
 import { CameraSubscription, ScreenSubscription, CameraControlSubscription } from '../components/subscription'
 import Publication from '../components/publication'
 import config from '../config'
-import Chat from '../components/chat'
+import ChatList from '../components/chat/list'
+import ChatForm from '../components/chat/form'
 import { message, error } from '../notification'
+import './presenter.scss'
 const electron = window.require('electron')
 // TODO LOGGING
 const getScreenConstraints = (src, callback) => {
@@ -89,14 +91,15 @@ class Presenter extends PureComponent {
     this.signalSocket.message$.subscribe(message => {
       switch (message.id) {
       case 'welcome':
-        const { id, chat = [], ...presenter } = message
-        this.setState({
-          presenter,
-          chat
-        })
-        this.props.publicationCameraAdd(presenter.participantId + '-camera')
-        this.props.publicationScreenAdd(presenter.participantId + '-screen')
-
+        {
+          const { id, chat = [], ...presenter } = message
+          this.setState({
+            presenter,
+            chat
+          })
+          this.props.publicationCameraAdd(presenter.participantId + '-camera')
+          this.props.publicationScreenAdd(presenter.participantId + '-screen')
+        }
         break
       case 'message':
         {
@@ -201,14 +204,14 @@ class Presenter extends PureComponent {
             channel={myScreen.channel}
             socket={this.signalSocket}
             logging={this.logging}
-            video={this.props.screenAideo}
+            video={this.props.screenVideo}
             toggleVideo={toggleVideo}
           />
         )
       })
   }
 
-  roomParticipantrs() {
+  roomParticipants() {
     return this.props.subscriptions
       .filter(
         subscription => ![this.props.publications.camera, this.props.publications.screen].includes(subscription.channel)
@@ -226,17 +229,23 @@ class Presenter extends PureComponent {
       })
   }
   myChat() {
-    return <Chat messages={this.state.chat} onPostMessage={this.onPostMessage} />
+    return (
+      <div className="chat-column">
+        <ChatForm onPostMessage={this.onPostMessage} />
+        <div className="chat-list">
+          <ChatList messages={this.state.chat} reverse />
+        </div>
+      </div>
+    )
   }
   render() {
     const presenter = this.state.presenter
     if (!presenter) {
       return <p>.............connecting.............</p>
     }
-
     return (
-      <>
-        <nav className="navbar navbar-light bg-light mb-5">
+      <div className="presenter">
+        <nav className="navbar navbar-light bg-light">
           <span className="navbar-brand mb-0 h1">
             <span className="ml-2">{presenter.roomName}</span>
           </span>
@@ -247,20 +256,17 @@ class Presenter extends PureComponent {
             </button>
           </span>
         </nav>
-        {this.myChat()}
-
-        <div className="card mt-5">
-          <div className="card-body">
-            <div className="card-text">
-              {this.myCamera()}
-              {this.myScreen()}
-              {this.roomParticipantrs()}
-              {this.myCameraPublication()}
-              {this.myScreenPublication()}
-            </div>
+        <div className="row mt-0">
+          <div className="col1">
+            {this.roomParticipants()}
+            {this.myCamera()}
+            {this.myScreen()}
           </div>
+          <div className="col2">{this.myChat()}</div>
         </div>
-      </>
+        {this.myCameraPublication()}
+        {this.myScreenPublication()}
+      </div>
     )
   }
 }

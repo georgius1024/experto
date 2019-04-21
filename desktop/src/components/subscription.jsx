@@ -73,24 +73,24 @@ class DefaultSubscription extends Component {
       .pipe(filter(message => message.channel === this.props.channel))
       .subscribe(message => {
         switch (message.id) {
-          case 'startResponseForSubscriber':
-            this.log('SDP answer received from server. Connecting...')
-            this.webRtcPeer.processAnswer(message.sdpAnswer)
-            this.onConnected()
-            break
-          case 'error':
-            this.error('Error message from server', message.message)
-            break
-          case 'iceCandidateForSubscriber':
-            this.webRtcPeer.addIceCandidate(message.candidate)
-            break
-          case 'stopPublishing':
-            this.unsubscribe()
-            break
-          case 'startPublishing':
-            this.subscribe()
-            break
-          default:
+        case 'startResponseForSubscriber':
+          this.log('SDP answer received from server. Connecting...')
+          this.webRtcPeer.processAnswer(message.sdpAnswer)
+          this.onConnected()
+          break
+        case 'error':
+          this.error('Error message from server', message.message)
+          break
+        case 'iceCandidateForSubscriber':
+          this.webRtcPeer.addIceCandidate(message.candidate)
+          break
+        case 'stopPublishing':
+          this.unsubscribe()
+          break
+        case 'startPublishing':
+          this.subscribe()
+          break
+        default:
         }
       })
     this.subscribe()
