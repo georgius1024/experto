@@ -8,7 +8,7 @@ import { CameraSubscription, ScreenSubscription, CameraControlSubscription } fro
 import Publication from '../components/publication'
 import config from '../config'
 import Chat from '../components/chat'
-import { error } from '../notification'
+import { message, error } from '../notification'
 const electron = window.require('electron')
 // TODO LOGGING
 const getScreenConstraints = (src, callback) => {
@@ -43,7 +43,6 @@ class Presenter extends PureComponent {
       chat: []
     }
     this.subscription = null
-    this.onStart = this.onStart.bind(this)
     this.onStop = this.onStop.bind(this)
     this.onPostMessage = this.onPostMessage.bind(this)
   }
@@ -61,14 +60,8 @@ class Presenter extends PureComponent {
     this.props.subscriptionsRemoveAll()
     this.signalSocket.disconnect()
   }
-  onStart() {
-    this.setState({
-      started: true
-    })
-    this.props.publicationCameraAdd(this.state.presenter.participantId + '-camera')
-    this.props.publicationScreenAdd(this.state.presenter.participantId + '-screen')
-  }
   onStop() {
+    this.signalSocket.disconnect()
     this.props.history.push('/')
   }
   onPostMessage(body) {
@@ -80,27 +73,30 @@ class Presenter extends PureComponent {
     this.signalSocket = new ObservableSocket(`${config.rtcEndPoint}/${code}`)
     this.signalSocket.reconnect = false
     this.signalSocket.open$.subscribe(() => {
-      //alert('Socket open')
+      message('Подключено')
     })
 
     this.signalSocket.error$.subscribe(() => {
-      error('Socket error')
+      error('Ошибка сокета')
       this.props.history.push('/')
     })
 
     this.signalSocket.close$.subscribe(() => {
-      error('Socket disconnected')
+      error('Внезапное отключение')
       this.props.history.push('/')
     })
 
     this.signalSocket.message$.subscribe(message => {
       switch (message.id) {
       case 'welcome':
-        const { id, chat = [], ...rest } = message
+        const { id, chat = [], ...presenter } = message
         this.setState({
-          presenter: rest,
+          presenter,
           chat
         })
+        this.props.publicationCameraAdd(presenter.participantId + '-camera')
+        this.props.publicationScreenAdd(presenter.participantId + '-screen')
+
         break
       case 'message':
         {
@@ -234,61 +230,37 @@ class Presenter extends PureComponent {
   }
   render() {
     const presenter = this.state.presenter
-    const started = this.state.started
     if (!presenter) {
-      return <p>.............loading.............</p>
+      return <p>.............connecting.............</p>
     }
 
     return (
-      <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
-        <div
-          className="modal-dialog"
-          role="document"
-          style={{
-            width: '100%',
-            height: '100%',
-            minHeight: '100%',
-            minWidth: '100%',
-            margin: '0'
-          }}
-        >
-          <div className="modal-content" />
-          <nav className="navbar navbar-light bg-light mb-5">
-            <span className="navbar-brand mb-0 h1">
-              <span className="ml-2">{presenter.roomName}</span>
-            </span>
-            <span>
-              {!started && (
-                <button className="btn btn-link ml-2" onClick={this.onStart}>
-                  <i className="fas fa-video mr-1" />
-                  Начать вещание
-                </button>
-              )}
-              {started && (
-                <button className="btn btn-link ml-2" onClick={this.onStop}>
-                  <i className="fas fa-video-slash mr-1" />
-                  Прекрaтить вещание
-                </button>
-              )}
-            </span>
-          </nav>
-          {this.myChat()}
+      <>
+        <nav className="navbar navbar-light bg-light mb-5">
+          <span className="navbar-brand mb-0 h1">
+            <span className="ml-2">{presenter.roomName}</span>
+          </span>
+          <span>
+            <button className="btn btn-link ml-2" onClick={this.onStop}>
+              <i className="fas fa-video-slash mr-1" />
+              Прекрaтить встречу
+            </button>
+          </span>
+        </nav>
+        {this.myChat()}
 
-          {started && (
-            <div className="card mt-5">
-              <div className="card-body">
-                <div className="card-text">
-                  {this.myCamera()}
-                  {this.myScreen()}
-                  {this.roomParticipantrs()}
-                  {this.myCameraPublication()}
-                  {this.myScreenPublication()}
-                </div>
-              </div>
+        <div className="card mt-5">
+          <div className="card-body">
+            <div className="card-text">
+              {this.myCamera()}
+              {this.myScreen()}
+              {this.roomParticipantrs()}
+              {this.myCameraPublication()}
+              {this.myScreenPublication()}
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 }

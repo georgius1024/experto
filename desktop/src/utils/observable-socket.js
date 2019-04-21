@@ -54,6 +54,7 @@ class ObservableSocket {
     if (this.reconnectTimer) {
       clearInterval(this.reconnectTimer)
     }
+    this.webSocket.onclose = undefined
     this.webSocket.close()
   }
 
