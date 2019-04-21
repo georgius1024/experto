@@ -4,7 +4,6 @@ node_modules
 .idea
 .vscode
 #other files
-public
 dist
 sh.cmd
 yarn.lock
