@@ -5,14 +5,6 @@
 import { toast } from 'react-toastify'
 import Api from './api'
 import './notification.css'
-toast.configure({
-  position: 'top-right',
-  autoClose: 5000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: false
-})
 
 function message(text) {
   toast.info(text)

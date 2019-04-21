@@ -24,7 +24,16 @@ class App extends PureComponent {
       <>
         <MemoryRouter>
           <Spinner />
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick
+            pauseOnVisibilityChange={false}
+            draggable
+            pauseOnHover
+          />
           <AppHeader />
           <Switch>
             <PrivateRoute exact path="/" component={MainView} registered={this.props.registered} />

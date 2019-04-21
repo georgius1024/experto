@@ -3,6 +3,7 @@
  */
 const Email = require('email-templates')
 const nodemailer = require('nodemailer')
+const moment = require('moment-timezone')
 const path = require('path')
 
 const smtpConfig = {
@@ -57,22 +58,23 @@ const sendMail = async (recipient, template, locals) => {
   })
 }
 
-
 async function expertNotificationMessage(expert) {
-  const locals = {...expert}
+  const locals = { ...expert }
   return await sendMail(expert.email, 'expert', locals)
 }
 
-async function invitationMessage(recipient, action, tests) {
-  const locals = {recipient, action, tests}
-  locals.actionUrl = process.env.APP_PUBLIC_URL
-  locals.actionName = 'Перейти в чат'
-  return await sendMail(recipient.email, 'invitation', locals)
+async function listenertNotificationMessage(expert, room) {
+  const locals = { ...expert, ...room }
+  locals.actionUrl = process.env.APP_PUBLIC_URL + '/room/' + room.listenerCode
+  locals.planned = moment(room.date)
+    .tz('Europe/Moscow')
+    .format('DD.MM.YYYY HH:mm')
+  return await sendMail(room.listenerEmail, 'listener', locals)
 }
 
 module.exports = {
   Mailer,
   sendMail,
-  invitationMessage,
+  listenertNotificationMessage,
   expertNotificationMessage
 }

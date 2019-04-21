@@ -1,0 +1,11 @@
+extends ../layout.pug
+
+block header
+  h3 Приглашение на встречу
+block content
+  p Здравствуйте, #{ listenerName }.
+  p #{ name } приглашает Вас на онлайн-встречу.
+  p Встреча состоится в #{planned} по московскому времени.
+  p Накануне назначеного времени перейдите по присланной ссылке (кликните по кнопке).
+block action
+  a.btn-primary(href=actionUrl) Прийти на встречу

@@ -1,14 +1,13 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { withRouter, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import actions from '../store/actions'
-import ObservableSocket from '../utils/observable-socket'
-import { CameraSubscription, ScreenSubscription, CameraControlSubscription } from '../components/subscription'
-import Publication from '../components/publication'
-import config from '../config'
-import Chat from '../components/chat'
-import { error } from '../notification'
+import actions from './store/actions'
+import ObservableSocket from './utils/observable-socket'
+import { CameraSubscription, ScreenSubscription, CameraControlSubscription } from './components/subscription'
+import Publication from './components/publication'
+import config from './config'
+import Chat from './components/chat'
+import { error } from './notification'
 const electron = window.require('electron')
 // TODO LOGGING
 const getScreenConstraints = (src, callback) => {
@@ -51,7 +50,7 @@ class Presenter extends PureComponent {
     this.connect()
   }
   componentDidUpdate(prevProps) {
-    const sameCode = prevProps.match.params.code === this.props.match.params.code
+    const sameCode = prevProps.code === this.props.code
     if (!sameCode) {
       this.connect()
     }
@@ -76,7 +75,7 @@ class Presenter extends PureComponent {
   }
   connect() {
     console.log('New connection')
-    const code = this.props.match.params.code
+    const code = this.props.code
     this.signalSocket = new ObservableSocket(`${config.rtcEndPoint}/${code}`)
     this.signalSocket.reconnect = false
     this.signalSocket.open$.subscribe(() => {
@@ -240,62 +239,48 @@ class Presenter extends PureComponent {
     }
 
     return (
-      <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
-        <div
-          className="modal-dialog"
-          role="document"
-          style={{
-            width: '100%',
-            height: '100%',
-            minHeight: '100%',
-            minWidth: '100%',
-            margin: '0'
-          }}
-        >
-          <div className="modal-content" />
-          <nav className="navbar navbar-light bg-light mb-5">
-            <span className="navbar-brand mb-0 h1">
-              <span className="ml-2">{presenter.roomName}</span>
-            </span>
-            <span>
-              {!started && (
-                <button className="btn btn-link ml-2" onClick={this.onStart}>
-                  <i className="fas fa-video mr-1" />
-                  Начать вещание
-                </button>
-              )}
-              {started && (
-                <button className="btn btn-link ml-2" onClick={this.onStop}>
-                  <i className="fas fa-video-slash mr-1" />
-                  Прекрaтить вещание
-                </button>
-              )}
-            </span>
-          </nav>
-          {this.myChat()}
+      <>
+        <nav className="navbar navbar-light bg-light mb-5">
+          <span className="navbar-brand mb-0 h1">
+            <span className="ml-2">{presenter.roomName}</span>
+          </span>
+          <span>
+            {!started && (
+              <button className="btn btn-link ml-2" onClick={this.onStart}>
+                <i className="fas fa-video mr-1" />
+                Начать вещание
+              </button>
+            )}
+            {started && (
+              <button className="btn btn-link ml-2" onClick={this.onStop}>
+                <i className="fas fa-video-slash mr-1" />
+                Прекрaтить вещание
+              </button>
+            )}
+          </span>
+        </nav>
+        {this.myChat()}
 
-          {started && (
-            <div className="card mt-5">
-              <div className="card-body">
-                <div className="card-text">
-                  {this.myCamera()}
-                  {this.myScreen()}
-                  {this.roomParticipantrs()}
-                  {this.myCameraPublication()}
-                  {this.myScreenPublication()}
-                </div>
+        {started && (
+          <div className="card mt-5">
+            <div className="card-body">
+              <div className="card-text">
+                {this.myCamera()}
+                {this.myScreen()}
+                {this.roomParticipantrs()}
+                {this.myCameraPublication()}
+                {this.myScreenPublication()}
               </div>
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+      </>
     )
   }
 }
 
 Presenter.propTypes = {
-  history: PropTypes.object,
-  match: PropTypes.object,
+  code: PropTypes.string,
   publications: PropTypes.object,
   subscriptions: PropTypes.array,
   cameraAudio: PropTypes.bool,
@@ -347,4 +332,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withRouter(Presenter))
+)(Presenter)

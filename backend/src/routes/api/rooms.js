@@ -8,7 +8,9 @@ const _get = require('lodash.get')
 const router = new Router()
 const uuid = require('uuid/v4')
 const roomsDb = require('../../db/rooms-db')
+const usersDb = require('../../db/users-db')
 const Response = require('../../classes/response')
+const { listenertNotificationMessage } = require('../../classes/mailer')
 const logger = require('../../classes/logger')
 const { pool } = require('../../rtc')
 
@@ -54,6 +56,22 @@ router.post('/', async ctx => {
     } else {
       return Response.error(ctx, validation, 422)
     }
+  } catch (error) {
+    logger.error(error)
+    return Response.error(ctx, error.message)
+  }
+})
+
+router.post('/notification/:_id', async ctx => {
+  const userId = _get(ctx, 'state.token._id', 0)
+  try {
+    const expert = await usersDb.get(userId)
+    const room = await roomsDb.get(ctx.params._id)
+    logger.trace(`Отправляется уведомление для ${room.listenerName}`)
+    await listenertNotificationMessage(expert, room)
+    room.notificationSent = new Date()
+    roomsDb.update(room)
+    return Response.message(ctx, 'Сообщение отправлено')
   } catch (error) {
     logger.error(error)
     return Response.error(ctx, error.message)

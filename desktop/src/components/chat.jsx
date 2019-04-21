@@ -17,7 +17,7 @@ function Chat({ messages, onPostMessage }) {
   const history = messages.map(({ message, from, at }) => {
     const time = moment(at).format('HH:mm:ss')
     return (
-      <ListGroup.Item>
+      <ListGroup.Item key={time}>
         <p>
           <b>
             {time} - {from}

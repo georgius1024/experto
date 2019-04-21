@@ -4,13 +4,12 @@ import moment from 'moment'
 import 'moment/locale/ru'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import Pagination from 'react-bootstrap/Pagination'
 import Button from 'react-bootstrap/Button'
+import NavigationBar from '../components/main-nav-bar'
 import CopyInput from '../components/copy-input'
 import actions from '../store/actions'
 import Api from '../api'
 import ConfirmDialog from '../components/confirm-dialog'
-import { message } from '../notification'
 import config from '../config'
 const key = 'last-selected-room'
 moment.locale('ru')
@@ -23,16 +22,14 @@ class Main extends PureComponent {
       selectedRoom: localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key)) : null,
       confirmDelete: false
     }
-    this.doUnregister = this.doUnregister.bind(this)
     this.onSelect = this.onSelect.bind(this)
     this.onCreate = this.onCreate.bind(this)
     this.onUpdate = this.onUpdate.bind(this)
     this.onDelete = this.onDelete.bind(this)
+    this.onNotifyListener = this.onNotifyListeber.bind(this)
     this.onConfirmDelete = this.onConfirmDelete.bind(this)
     this.onCancelDelete = this.onCancelDelete.bind(this)
     this.onStart = this.onStart.bind(this)
-    this.onMoveNext = this.onMoveNext.bind(this)
-    this.onMovePrev = this.onMovePrev.bind(this)
   }
   componentDidMount() {
     this.fetch()
@@ -54,48 +51,14 @@ class Main extends PureComponent {
       }
     })
   }
-  canMoveNext() {
-    const selectedId = this.state.selectedRoom && this.state.selectedRoom._id
-    const rooms = this.state.rooms
-    const current = rooms.findIndex(e => e._id === selectedId)
-    return current < rooms.length - 1
-  }
-  onMoveNext() {
-    const selectedId = this.state.selectedRoom && this.state.selectedRoom._id
-    const rooms = this.state.rooms
-    const current = rooms.findIndex(e => e._id === selectedId)
-    if (current < rooms.length - 1) {
-      this.setState({
-        selectedRoom: rooms[current + 1]
-      })
-    }
-  }
-  canMovePrev() {
-    const selectedId = this.state.selectedRoom && this.state.selectedRoom._id
-    const rooms = this.state.rooms
-    const current = rooms.findIndex(e => e._id === selectedId)
-    return current > 0
-  }
-  onMovePrev() {
-    const selectedId = this.state.selectedRoom && this.state.selectedRoom._id
-    const rooms = this.state.rooms
-    const current = rooms.findIndex(e => e._id === selectedId)
-    if (current > 0) {
-      this.setState({
-        selectedRoom: rooms[current - 1]
-      })
-    }
-  }
 
-  doUnregister() {
-    Api.get('private/logout').subscribe(() => this.props.unregister())
-  }
   onSelect(room) {
     localStorage.setItem(key, JSON.stringify(room))
     this.setState({
       selectedRoom: room
     })
   }
+
   onCreate() {
     this.props.history.push('/create')
   }
@@ -123,8 +86,19 @@ class Main extends PureComponent {
       confirmDelete: false
     })
   }
+  onNotifyListeber() {
+    Api.post('api/rooms/notification/' + this.state.selectedRoom._id).subscribe(() => this.fetch())
+  }
   onStart() {
+    const code = this.state.selectedRoom.presenterCode
+    this.props.history.push('/start/' + code)
+    /*
+    const electron = window.require('electron')
+    electron.remote.process.createPopupWindow(code)
+    */
+    /*
     this.props.history.push('/start/' + this.state.selectedRoom.presenterCode)
+    */
   }
   selectedRoom() {
     if (!this.state.selectedRoom) {
@@ -153,31 +127,43 @@ class Main extends PureComponent {
           <dd className="col-sm-9">
             <CopyInput value={config.public + '/room/' + this.state.selectedRoom.guestCode} />
           </dd>
+          {this.state.selectedRoom.notificationSent && (
+            <>
+              <dt className="col-sm-3  pb-2 mt-2">Приглашение</dt>
+              <dd className="col-sm-9">
+                Отправлено {moment(room.notificationSent).format('MM.DD.YY HH:mm')}
+                <span className="text-muted ml-2">({moment(room.notificationSent).fromNow()})</span>
+                <Button variant="link" onClick={this.onNotifyListener} size="sm" className="ml-3 mb-1">
+                  <i className="fa fa-envelope ml-2" /> Отправить повторно
+                </Button>
+              </dd>
+            </>
+          )}
+          {!this.state.selectedRoom.notificationSent && (
+            <>
+              <dt className="col-sm-3 pb-2 mt-2">Приглашение</dt>
+              <dd className="col-sm-9">
+                Не было отправлено
+                <Button variant="link" onClick={this.onNotifyListener} size="sm" className="ml-3 mb-1">
+                  <i className="fa fa-envelope ml-2" /> Отправить сейчас
+                </Button>
+              </dd>
+            </>
+          )}
         </dl>
+        <Button variant="primary" onClick={this.onStart}>
+          <i className="fa fa-video mr-2" /> Начать встречу
+        </Button>
+
         <hr className="my-3" />
-        <div className="d-flex">
-          <Pagination className="m-0">
-            <Pagination.Prev onClick={this.onMovePrev} disabled={!this.canMovePrev()} />
-            <Pagination.Next onClick={this.onMoveNext} disabled={!this.canMoveNext()} />
-          </Pagination>
-          <Button variant="primary" className="ml-2 w-10em" onClick={this.onStart}>
-            <i className="fa fa-video" /> Начать
-          </Button>
-          <Button variant="primary" className="ml-3">
-            <i className="fa fa-envelope ml-2" /> Пригласить
-          </Button>
-
-          <Button variant="secondary" onClick={this.onCreate} className="ml-3 w-10em">
-            Создать
-          </Button>
-          <Button variant="secondary" onClick={this.onUpdate} className="ml-3 w-10em">
-            Редактировать
-          </Button>
-
-          <Button variant="danger" onClick={this.onDelete} className="ml-3 w-10em">
-            Удалить
-          </Button>
-        </div>
+        <NavigationBar
+          rooms={this.state.rooms}
+          selectedRoom={this.state.selectedRoom}
+          onSelect={this.onSelect}
+          onCreate={this.onCreate}
+          onUpdate={this.onUpdate}
+          onDelete={this.onDelete}
+        />
       </div>
     )
   }
@@ -201,7 +187,8 @@ Main.propTypes = {
   registration: PropTypes.object,
   registered: PropTypes.bool,
   unregister: PropTypes.func,
-  history: PropTypes.object
+  history: PropTypes.object,
+  location: PropTypes.object
 }
 
 const mapStateToProps = state => {
