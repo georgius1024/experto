@@ -1,16 +1,16 @@
 {
-  "name": "my-app",
-  "description": "Electron + Create React App + Electron Builder",
+  "name": "experto-crede",
+  "description": "Вместо тысячи слов...",
   "version": "0.1.0",
   "private": true,
   "author": {
-    "name": "Your Name",
-    "email": "your.email@domain.com",
-    "url": "https://your-website.com"
+    "name": "Юрий Тимофеев",
+    "email": "georgius@vep.ru",
+    "url": "https://experto.vep.ru"
   },
   "build": {
-    "appId": "com.my-website.my-app",
-    "productName": "MyApp",
+    "appId": "com.vep.experto-crede",
+    "productName": "ExpertoCrede",
     "copyright": "Copyright © 2019 ${author}",
     "mac": {
       "category": "public.app-category.utilities"
