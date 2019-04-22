@@ -21,16 +21,16 @@ const routes = require('./src/routes')
 // Error catcher
 app.use(async (ctx, next) => {
   try {
-    await next();
+    await next()
   } catch (err) {
     ctx.status = err.status || 500
     ctx.body = {
-      'status': 'error',
-      'message': err.message
+      status: 'error',
+      message: err.message
     }
     ctx.app.emit('error', err, ctx)
   }
-});
+})
 
 app.on('error', error => {
   if (error.message === 'Authentication Error') {
@@ -56,8 +56,8 @@ app.use(serve('public'))
 
 // 404 handler
 app.use(async ctx => {
-  ctx.throw(404, 'Route not found for ' +  ctx.method + ' ' + ctx.href)
-});
+  ctx.throw(404, 'Route not found for ' + ctx.method + ' ' + ctx.href)
+})
 
 const options = {
   key: fs.readFileSync('./keys/server.key'),
@@ -67,8 +67,8 @@ const options = {
 const port = process.env.APP_LISTEN_PORT || 3000
 const server = https.createServer(options, app.callback()).listen(port)
 
-dns.lookup(os.hostname(), function (err, addr) {
-  console.log(`${process.env.APP_NAME} now running at ${'https://'+ addr + ':' + port}`)
+dns.lookup(os.hostname(), function(err, addr) {
+  logger.info(`${process.env.APP_NAME} now running at ${'https://' + addr + ':' + port}`)
 })
 
 RTC.init()

@@ -1,4 +1,5 @@
 const kurento = require('kurento-client')
+const logger = require('../classes/logger')
 
 const {
   getKurentoClient$,
@@ -27,10 +28,10 @@ class RooomPublication {
   }
 
   log(message) {
-    console.log(`${this.channel}: ${message}`)
+    logger.trace(`${this.channel}: ${message}`)
   }
   error(message) {
-    console.error(`${this.channel}: ${message}`)
+    logger.error(`${this.channel}: ${message}`)
   }
 
   report() {

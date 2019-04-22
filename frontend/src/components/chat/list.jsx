@@ -4,11 +4,11 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import moment from 'moment-timezone'
 
 function ChatList({ messages, reverse }) {
-  const history = messages.map(({ message, from, at }) => {
+  const history = messages.map(({ message, from, at }, index) => {
     const time = moment(at).format('HH:mm:ss')
-    const key = moment(at).valueOf()
+    const key = moment(at).valueOf() + '.' + index
     return (
-      <ListGroup.Item key={time}>
+      <ListGroup.Item key={key}>
         <div>
           <b>
             {time} - {from}

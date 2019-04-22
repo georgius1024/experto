@@ -1,10 +1,11 @@
 const kurento = require('kurento-client')
+const logger = require('../classes/logger')
 
 const { createWebRtcEndpoint$ } = require('./kurento-calls')
 
 class RoomSubscription {
   constructor(participant, channel) {
-    this.id = participant.id + '.' + channel
+    this.id = channel
     this.participant = participant
     this.channel = channel
     this.endPoint = null
@@ -15,10 +16,10 @@ class RoomSubscription {
   }
 
   log(message) {
-    console.log(`${this.id}: ${message}`)
+    logger.trace(`${this.id}: ${message}`)
   }
   error(message) {
-    console.error(`${this.id}: ${message}`)
+    logger.error(`${this.id}: ${message}`)
   }
 
   report() {

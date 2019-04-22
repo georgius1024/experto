@@ -35,6 +35,8 @@ box16x9 {
 .camera-subscription {
   video {
     background: url('../assets/default-poster.png');
+    background-repeat: no-repeat;
+    background-size: contain;
   }
   .overlay {
     .unmute {
@@ -88,6 +90,9 @@ box16x9 {
   video {
     @extend box16x9;
     background: url('../assets/desktop16x9.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
   }
 }
 

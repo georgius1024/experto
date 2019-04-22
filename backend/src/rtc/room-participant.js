@@ -1,3 +1,4 @@
+const logger = require('../classes/logger')
 class RoomParticipant {
   constructor(id, name, role, socket) {
     this.id = id
@@ -9,11 +10,11 @@ class RoomParticipant {
   }
 
   log(message) {
-    console.log(`${this.id}: ${message}`)
+    logger.trace(`${this.id}: ${message}`)
   }
 
   error(message) {
-    console.error(`${this.id}: ${message}`)
+    logger.error(`${this.id}: ${message}`)
   }
 
   report() {
@@ -30,16 +31,16 @@ class RoomParticipant {
 
   decodeSocketState(state) {
     switch (state) {
-    case 0:
-      return 'connecting'
-    case 1:
-      return 'open'
-    case 2:
-      return 'closing'
-    case 3:
-      return 'closed'
-    default:
-      return '#' + state
+      case 0:
+        return 'connecting'
+      case 1:
+        return 'open'
+      case 2:
+        return 'closing'
+      case 3:
+        return 'closed'
+      default:
+        return '#' + state
     }
   }
 
