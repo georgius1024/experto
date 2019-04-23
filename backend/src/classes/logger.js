@@ -3,9 +3,8 @@
  */
 const options = {
   level: process.env.NODE_ENV === 'production' ? 'info' : 'trace',
-  extreme: process.env.NODE_ENV === 'production'
 }
-if (!options.extreme) {
+if (process.env.NODE_ENV !== 'production') {
   options.prettyPrint = { colorize: true }
 }
 const Logger = require('pino')(options)
