@@ -92,13 +92,6 @@ class Main extends PureComponent {
   onStart() {
     const code = this.state.selectedRoom.presenterCode
     this.props.history.push('/start/' + code)
-    /*
-    const electron = window.require('electron')
-    electron.remote.process.createPopupWindow(code)
-    */
-    /*
-    this.props.history.push('/start/' + this.state.selectedRoom.presenterCode)
-    */
   }
   selectedRoom() {
     if (!this.state.selectedRoom) {

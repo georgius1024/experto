@@ -4,7 +4,7 @@ const development = {
 }
 
 const production = {
-  rtcEndPoint: 'wss://' + window.location.host,
+  rtcEndPoint: 'wss://expert.vep.ru:3421',
   logLevel: 'warn'
 }
 
