@@ -105,7 +105,7 @@ class Main extends PureComponent {
         <dl className="row mt-3">
           <dt className="col-sm-3 pb-2">Время</dt>
           <dd className="col-sm-9">
-            {moment(room.date).format('MM.DD.YY HH:mm')}
+            {moment(room.date).format('DD.MM.YY HH:mm')}
             <span className="text-muted ml-2">({moment(room.date).fromNow()})</span>
           </dd>
           <dt className="col-sm-3 pt-2">Слушатель</dt>

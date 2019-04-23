@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { Prompt } from 'react-router'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import moment from 'moment-timezone'
+window.moment = moment
 
 const roomModel = {
   _id: 'new',
@@ -38,6 +40,9 @@ class RoomForm extends PureComponent {
   componentDidUpdate(prevProps) {
     if (prevProps.model !== this.props.model) {
       const newModel = { ...roomModel, ...this.props.model }
+      newModel.date = moment(newModel.date)
+        .local()
+        .format('YYYY-MM-DDTHH:mm:ss')
       this.setState({
         initial: newModel,
         model: newModel
@@ -123,7 +128,9 @@ class RoomForm extends PureComponent {
       this.setState({
         initial: { ...this.state.model }
       })
-      this.props.onSubmit(this.state.model)
+      const model = this.state.model
+      model.date = moment(model.date)
+      this.props.onSubmit(model)
     }
   }
 
