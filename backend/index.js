@@ -60,8 +60,8 @@ app.use(async ctx => {
 })
 
 const options = {
-  key: fs.readFileSync('./keys/server.key'),
-  cert: fs.readFileSync('./keys/server.crt')
+  key: fs.readFileSync(process.env.SSL_KEY),
+  cert: fs.readFileSync(process.env.SSL_CERT)
 }
 
 const port = process.env.APP_LISTEN_PORT || 3000
