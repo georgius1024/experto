@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "experts": "node experts.js",
     "dev": "nodemon index.js",
     "test": "nyc mocha ./tests/before.js ./tests/*.test.js --exit"
   },
