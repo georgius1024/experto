@@ -1,4 +1,5 @@
 import React, { memo } from 'react'
+import PropTypes from 'prop-types'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 function ConfirmDialog({ active, caption, body, onConfirm, onCancel, confirmButton, cancelButton }) {
@@ -14,18 +15,28 @@ function ConfirmDialog({ active, caption, body, onConfirm, onCancel, confirmButt
       <Modal.Body>{body}</Modal.Body>
       <Modal.Footer>
         {hasConfirmButton && (
-          <Button variant="primary" onClick={onConfirm}>
+          <Button variant="primary" onClick={onConfirm} className="w-10em">
             {confirmButton || 'Подтвердить'}
           </Button>
         )}
         {hasCancelButton && (
-          <Button variant="secondary" onClick={onCancel}>
+          <Button variant="secondary" onClick={onCancel} className="w-10em">
             {cancelButton || 'Отмена'}
           </Button>
         )}
       </Modal.Footer>
     </Modal>
   )
+}
+
+ConfirmDialog.propTypes = {
+  active: PropTypes.bool,
+  caption: PropTypes.string,
+  body: PropTypes.string, 
+  onConfirm: PropTypes.func, 
+  onCancel: PropTypes.func, 
+  confirmButton: PropTypes.string,
+  cancelButton: PropTypes.string,
 }
 
 export default memo(ConfirmDialog)

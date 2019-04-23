@@ -1,6 +1,7 @@
 import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 import ListGroup from 'react-bootstrap/ListGroup'
+import Linkify from 'react-linkify'
 import moment from 'moment-timezone'
 
 function ChatList({ messages, reverse }) {
@@ -14,7 +15,7 @@ function ChatList({ messages, reverse }) {
             {time} - {from}
           </b>
         </div>
-        <div>{message}</div>
+        <Linkify>{message}</Linkify>
       </ListGroup.Item>
     )
   })

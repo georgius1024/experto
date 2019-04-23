@@ -40,8 +40,7 @@ class ObservableSocket {
 
     this.webSocket.onerror = error => {
       this.error$.next(error, this.webSocket)
-      this.webSocket.onclose = undefined
-      this.webSocket.close()
+      this.disconnect()
     }
   }
 
@@ -55,7 +54,10 @@ class ObservableSocket {
       clearInterval(this.reconnectTimer)
     }
     this.webSocket.onclose = undefined
+    this.webSocket.onerror = undefined
+    this.webSocket.onmessage = undefined
     this.webSocket.close()
+    this.webSocket = null
   }
 
   sendRaw(payload) {

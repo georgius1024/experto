@@ -1,4 +1,5 @@
 .room {
+  font-size: 12px;
   position: fixed;
   top: 0;
   left: 0;
@@ -9,6 +10,9 @@
   .col1 {
     flex-grow: 1;
     min-height: 100vh;
+    background: url('../assets/desktop16x9.png');
+    background-repeat: no-repeat;
+    background-position: center;
     div {
       margin: 0 auto;
       width: 100%;
@@ -30,24 +34,18 @@
       flex-grow: 0;
       flex-shrink: 0;
       flex-basis: 180px;
-      div {
-        width: 100%;
-        height: 90px;
-      }
       video {
-        width: 100%;
+        width: 120px;
         height: 90px;
       }
     }
     .row2 {
       height: 38px;
-      font-size: 14px;
       .form-control {
         margin: 0;
       }
     }
     .row3 {
-      font-size: 14px;
       max-height: calc(100vh - 180px - 38px);
       overflow-y: auto;
       .list-group-item {
@@ -57,4 +55,23 @@
       }
     }
   }
+}
+.screen-placeholder {
+  background: url('../assets/desktop16x9.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.camera-placeholder {
+  background: url('../assets/default-poster.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  width: 120px;
+  height: 90px;
+}
+
+.form-control {
+  font-size: 12px !important;
 }

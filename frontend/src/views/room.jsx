@@ -85,7 +85,7 @@ class Presenter extends PureComponent {
     this.signalSocket.message$.subscribe(message => {
       switch (message.id) {
         case 'welcome':
-          const { id, chat, ...listener } = message
+          const { id, chat = [], ...listener } = message
           this.setState(
             {
               role: listener.role,
@@ -165,7 +165,7 @@ class Presenter extends PureComponent {
         />
       )
     } else {
-      return null
+      return <div className="camera-placeholder" />
     }
   }
 
@@ -181,7 +181,7 @@ class Presenter extends PureComponent {
         />
       )
     } else {
-      return null
+      return <div className="screen-placeholder" />
     }
   }
   listenerCamera() {
@@ -219,7 +219,7 @@ class Presenter extends PureComponent {
         )
       }
     } else {
-      return null
+      return <div className="camera-placeholder" />
     }
   }
 

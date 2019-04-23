@@ -17,7 +17,7 @@ function ChatForm({ onPostMessage }) {
   return (
     <Form onSubmit={onSubmit}>
       <Form.Group>
-        <Form.Control type="text" placeholder="Введите сообщение" value={message} onChange={onChange} />
+        <Form.Control type="text" placeholder="Чат" value={message} onChange={onChange} />
       </Form.Group>
     </Form>
   )
