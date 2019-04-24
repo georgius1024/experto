@@ -4,7 +4,6 @@ import { Prompt } from 'react-router'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import moment from 'moment-timezone'
-window.moment = moment
 
 const roomModel = {
   _id: 'new',

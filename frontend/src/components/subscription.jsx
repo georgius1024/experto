@@ -15,6 +15,7 @@ class DefaultSubscription extends Component {
     this.video = React.createRef()
     this.webRtcPeer = null
     this.subscription = null
+    this.reconnect = null
     this.state = {
       connected: false
     }
@@ -152,6 +153,9 @@ class DefaultSubscription extends Component {
 
   unsubscribe() {
     this.sendMessage('unsubscribe')
+    if (this.reconnect) {
+      clearTimeout(this.reconnect)
+    }
     if (this.webRtcPeer) {
       this.webRtcPeer.dispose()
       this.webRtcPeer = null
@@ -163,6 +167,43 @@ class DefaultSubscription extends Component {
     if (this.props.onConnected) {
       this.props.onConnected(this)
     }
+    if (this.props.reconnect) {
+      this.reconnect = setTimeout(() => {
+        this.checkIsConnected()
+      }, this.props.reconnect)
+    }
+  }
+
+  checkIsConnected() {
+    if (this.videoIsFlowing()) {
+      this.log('✓Subscription is active')
+    } else {
+      this.log('×Subscription is frozen, need reconnect')
+      this.unsubscribe()
+      // Подключаемся не сразу, а через 0.8 секунды
+      // Чтобы сервер закрыл прошлую коннекцию
+      setTimeout(() => {
+        this.subscribe()
+      }, 800)
+    }
+  }
+
+  getUri(format) {
+    let video = this.video.current
+    let canvas = document.createElement('CANVAS')
+    if (!format) {
+      format = 'png'
+    }
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    canvas.getContext('2d').drawImage(video, 0, 0)
+    return canvas.toDataURL('image/' + format)
+  }
+
+  videoIsFlowing() {
+    let dataUri = this.getUri('png')
+    let result = dataUri.length > 100
+    return result
   }
 
   render() {
@@ -285,6 +326,7 @@ DefaultSubscription.propTypes = {
   poster: PropTypes.string,
   muted: PropTypes.bool,
   volume: PropTypes.number,
+  reconnect: PropTypes.number,
   onConnected: PropTypes.func
 }
 
@@ -292,7 +334,8 @@ DefaultSubscription.defaultProps = {
   stunServer: '',
   logging: false,
   volume: 50,
-  muted: true
+  muted: true,
+  reconnect: 5000
 }
 
 CameraSubscription.propTypes = {
