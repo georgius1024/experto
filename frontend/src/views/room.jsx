@@ -10,6 +10,7 @@ import { CameraSubscription, ScreenSubscription, CameraControlSubscription } fro
 import Publication from '../components/publication'
 import config from '../config'
 import './room.scss'
+
 class Presenter extends PureComponent {
   constructor(props) {
     super(props)

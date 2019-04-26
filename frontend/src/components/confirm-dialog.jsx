@@ -1,6 +1,7 @@
 import React, { memo } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
+
 function ConfirmDialog({ active, caption, body, onConfirm, onCancel, confirmButton, cancelButton }) {
   const hasConfirmButton = Boolean(onConfirm)
   const hasCancelButton = Boolean(onCancel)
