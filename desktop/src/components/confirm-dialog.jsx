@@ -2,7 +2,16 @@ import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
-function ConfirmDialog({ active, caption, body, onConfirm, onCancel, confirmButton, cancelButton }) {
+
+function ConfirmDialog({
+  active,
+  caption,
+  body,
+  onConfirm,
+  onCancel,
+  confirmButton,
+  cancelButton
+}) {
   const hasConfirmButton = Boolean(onConfirm)
   const hasCancelButton = Boolean(onCancel)
   return (
@@ -15,12 +24,12 @@ function ConfirmDialog({ active, caption, body, onConfirm, onCancel, confirmButt
       <Modal.Body>{body}</Modal.Body>
       <Modal.Footer>
         {hasConfirmButton && (
-          <Button variant="primary" onClick={onConfirm} className="w-10em">
+          <Button variant="primary" onClick={onConfirm}>
             {confirmButton || 'Подтвердить'}
           </Button>
         )}
         {hasCancelButton && (
-          <Button variant="secondary" onClick={onCancel} className="w-10em">
+          <Button variant="secondary" onClick={onCancel}>
             {cancelButton || 'Отмена'}
           </Button>
         )}
@@ -32,11 +41,10 @@ function ConfirmDialog({ active, caption, body, onConfirm, onCancel, confirmButt
 ConfirmDialog.propTypes = {
   active: PropTypes.bool,
   caption: PropTypes.string,
-  body: PropTypes.string, 
-  onConfirm: PropTypes.func, 
-  onCancel: PropTypes.func, 
+  body: PropTypes.string,
+  onConfirm: PropTypes.func,
+  onCancel: PropTypes.func,
   confirmButton: PropTypes.string,
-  cancelButton: PropTypes.string,
+  cancelButton: PropTypes.string
 }
-
 export default memo(ConfirmDialog)

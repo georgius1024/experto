@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App it matches the snapshot 1`] = `
+<div
+  className="container full-height"
+>
+  <div
+    className="Toastify"
+  />
+  <div
+    className="v-layout"
+  >
+    <div
+      className="jumbotron jumbotron-fluid bg-primary text-white"
+    >
+      <div
+        className="container"
+      >
+        <h1
+          className="display-4"
+        >
+          Experto crede
+        </h1>
+        <p
+          className="lead"
+        >
+          Вместо тысячи слов
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChatList component it matches the snapshot 1`] = `
+<div
+  className="list-group"
+  onKeyDown={[Function]}
+>
+  <div
+    className="list-group-item"
+    data-rb-event-key={null}
+    disabled={false}
+    onClick={[Function]}
+  >
+    <div>
+      <b>
+        03:24:00
+         - 
+        me
+      </b>
+    </div>
+    <div>
+      hello
+    </div>
+  </div>
+</div>
+`;

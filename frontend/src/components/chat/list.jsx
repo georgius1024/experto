@@ -1,13 +1,12 @@
 import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 import ListGroup from 'react-bootstrap/ListGroup'
-import Linkify from 'react-linkify'
 import moment from 'moment-timezone'
 
 function ChatList({ messages, reverse }) {
-  const history = messages.map(({ message, from, at }, index) => {
+  const history = messages.map(({ message, from, at }) => {
     const time = moment(at).format('HH:mm:ss')
-    const key = moment(at).valueOf() + '.' + index
+    const key = moment(at).valueOf()
     return (
       <ListGroup.Item key={key}>
         <div>
@@ -15,7 +14,7 @@ function ChatList({ messages, reverse }) {
             {time} - {from}
           </b>
         </div>
-        <Linkify>{message}</Linkify>
+        <div>{message}</div>
       </ListGroup.Item>
     )
   })
