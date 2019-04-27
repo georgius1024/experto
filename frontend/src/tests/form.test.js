@@ -1,6 +1,6 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-import ChatForm from './form'
+import ChatForm from '../components/chat/form'
 describe('ChatForm component', () => {
   test('it matches the snapshot', () => {
     const component = renderer.create(<ChatForm />)

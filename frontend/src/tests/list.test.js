@@ -1,6 +1,6 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-import ChatList from './list'
+import ChatList from '../components/chat/list'
 describe('ChatList component', () => {
   test('it matches the snapshot', () => {
     const messages = [

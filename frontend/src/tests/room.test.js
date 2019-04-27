@@ -1,8 +1,8 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
 import { MemoryRouter } from 'react-router-dom'
-import View from './404'
-describe('Error view', () => {
+import View from '../views/room'
+describe('Room view', () => {
   test('it matches the snapshot', () => {
     const view = renderer.create(
       <MemoryRouter>

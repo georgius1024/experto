@@ -1,6 +1,6 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-import View from './root'
+import View from '../views/root'
 describe('Root view', () => {
   test('it matches the snapshot', () => {
     const view = renderer.create(<View />)
