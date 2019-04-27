@@ -33,7 +33,7 @@
     "electron-dev": "concurrently \"cross-env BROWSER=none PORT=7000 yarn start\" \"wait-on http://localhost:7000 && electron .\" --kill-others",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "yarn build",
-    "electron-pack": "build -w"
+    "electron-pack": "build -wl"
   },
   "eslintConfig": {
     "extends": "react-app"

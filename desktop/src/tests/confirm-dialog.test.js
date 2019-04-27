@@ -1,6 +1,6 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-import ConfirmDialog from './confirm-dialog'
+import ConfirmDialog from '../components/confirm-dialog'
 describe('ConfirmDialog component', () => {
   test('it matches the snapshot', () => {
     const component = renderer.create(
