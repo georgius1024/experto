@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Register view it matches the snapshot 1`] = `
+<div
+  className="v-layout"
+>
+  <div
+    className="col-lg-6 col-md-8"
+  >
+    <div
+      className="card"
+    >
+      <div
+        className="card-header"
+      >
+        Регистрация эксперта
+      </div>
+      <div
+        className="card-body"
+      >
+        <form
+          className="card-text"
+        >
+          <div
+            className="form-group"
+          >
+            <label
+              className="form-label"
+            >
+              Регистрационный код
+            </label>
+            <input
+              className="form-control"
+              onChange={[Function]}
+              placeholder="Введите код"
+              value=""
+            />
+          </div>
+        </form>
+        <p
+          className="text-muted"
+        >
+          Откройте присланное Вам письмо и найдите в нем свой регистрационный код.
+        </p>
+        <footer
+          className="text-center"
+        >
+          <button
+            className="w-10em btn btn-primary"
+            disabled={false}
+            onClick={[Function]}
+            type="button"
+          >
+            Дальше
+          </button>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>
+`;

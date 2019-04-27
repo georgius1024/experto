@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Error view it matches the snapshot 1`] = `
+<div
+  className="v-layout"
+>
+  <div
+    className="jumbotron jumbotron-fluid bg-danger text-white"
+  >
+    <div
+      className="container"
+    >
+      <h1
+        className="display-4"
+      >
+        Ooops!
+      </h1>
+      <p
+        className="lead"
+      >
+        Страница не найдена!
+      </p>
+      <hr
+        className="my-4"
+      />
+      <a
+        className="btn btn-primary btn-lg"
+        href="/"
+        onClick={[Function]}
+      >
+        <i
+          className="fas fa-home mr-2"
+        />
+        На главную
+      </a>
+    </div>
+  </div>
+</div>
+`;
