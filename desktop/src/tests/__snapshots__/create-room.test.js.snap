@@ -1,0 +1,135 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create room view it matches the snapshot 1`] = `
+<div
+  className="container my-5"
+>
+  <div
+    className="col-lg-6 offset-lg-3 col-md-8 offset-md-2"
+  >
+    <div
+      className="card"
+    >
+      <div
+        className="bg-primary text-white card-header"
+      >
+        Создание новой встречи
+      </div>
+      <div
+        className="card-body"
+      >
+        <form
+          className=""
+          onSubmit={[Function]}
+        >
+          <div
+            className="form-group"
+          >
+            <label
+              className="form-label"
+            >
+              Время встречи
+            </label>
+            <input
+              className="form-control"
+              name="date"
+              onChange={[Function]}
+              placeholder="Выберите время встречи"
+              required={true}
+              type="datetime-local"
+              value=""
+            />
+            <div
+              className="error-text"
+            />
+          </div>
+          <div
+            className="form-group"
+          >
+            <label
+              className="form-label"
+            >
+              Название комнаты
+            </label>
+            <input
+              className="form-control"
+              maxLength="40"
+              name="roomName"
+              onChange={[Function]}
+              placeholder="Введите название"
+              required={true}
+              type="text"
+              value=""
+            />
+            <div
+              className="error-text"
+            />
+          </div>
+          <div
+            className="form-group"
+          >
+            <label
+              className="form-label"
+            >
+              Слушатель
+            </label>
+            <input
+              className="form-control"
+              maxLength="40"
+              name="listenerName"
+              onChange={[Function]}
+              placeholder="Введите ФИО"
+              required={true}
+              type="text"
+              value=""
+            />
+            <div
+              className="error-text"
+            />
+          </div>
+          <div
+            className="form-group"
+          >
+            <label
+              className="form-label"
+            >
+              Email слушателя
+            </label>
+            <input
+              className="form-control"
+              name="listenerEmail"
+              onChange={[Function]}
+              placeholder="Введите email"
+              required={true}
+              type="email"
+              value=""
+            />
+            <div
+              className="error-text"
+            />
+          </div>
+          <div
+            className="text-right"
+          >
+            <button
+              className="w-10em mr-4 btn btn-primary"
+              disabled={0}
+              type="submit"
+            >
+              Сохранить
+            </button>
+            <button
+              className="w-10em btn btn-secondary"
+              disabled={false}
+              onClick={[Function]}
+              type="button"
+            >
+              Отмена
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+`;
