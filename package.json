@@ -1,14 +1,14 @@
 {
-  "name": "pre-experto",
+  "name": "experto",
   "version": "1.0.0",
-  "description": "",
+  "description": "Experto crede",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Yurii Timofeyev",
+  "license": "private",
   "dependencies": {
     "moment-timezone": "^0.5.25",
     "rxjs": "^6.4.0"
