@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App header component it matches the snapshot 1`] = `
+<nav
+  className="navbar navbar-expand navbar-dark bg-primary sticky-top"
+>
+  <a
+    className="navbar-brand"
+    href="#"
+    onClick={[Function]}
+  >
+    Experto Crede
+  </a>
+  <span
+    className="ml-auto mr-2 navbar-text"
+  >
+    Эксперт не зарегистрирован
+  </span>
+</nav>
+`;

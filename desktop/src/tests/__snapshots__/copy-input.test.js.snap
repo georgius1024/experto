@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Copy-input component it matches the snapshot 1`] = `
+Array [
+  <button
+    className="float-right btn btn-link"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <i
+      className="fa fa-copy"
+    />
+  </button>,
+  <input
+    className="form-control-plaintext"
+    readOnly={true}
+    style={
+      Object {
+        "width": "calc(100% - 60px)",
+      }
+    }
+  />,
+]
+`;

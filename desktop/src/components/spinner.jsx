@@ -3,7 +3,7 @@
 */
 import React, { useEffect, useState } from 'react'
 import Api from '../api'
-import styles from './loading.module.scss'
+import styles from './spinner.module.scss'
 
 function LoadingComponent(props) {
   const [loading, setLoading] = useState(false)

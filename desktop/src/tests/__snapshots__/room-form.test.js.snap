@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Room-form component it matches the snapshot 1`] = `
+<form
+  className=""
+  onSubmit={[Function]}
+>
+  <div
+    className="form-group"
+  >
+    <label
+      className="form-label"
+    >
+      Время встречи
+    </label>
+    <input
+      className="form-control"
+      name="date"
+      onChange={[Function]}
+      placeholder="Выберите время встречи"
+      required={true}
+      type="datetime-local"
+      value=""
+    />
+    <div
+      className="error-text"
+    />
+  </div>
+  <div
+    className="form-group"
+  >
+    <label
+      className="form-label"
+    >
+      Название комнаты
+    </label>
+    <input
+      className="form-control"
+      maxLength="40"
+      name="roomName"
+      onChange={[Function]}
+      placeholder="Введите название"
+      required={true}
+      type="text"
+      value=""
+    />
+    <div
+      className="error-text"
+    />
+  </div>
+  <div
+    className="form-group"
+  >
+    <label
+      className="form-label"
+    >
+      Слушатель
+    </label>
+    <input
+      className="form-control"
+      maxLength="40"
+      name="listenerName"
+      onChange={[Function]}
+      placeholder="Введите ФИО"
+      required={true}
+      type="text"
+      value=""
+    />
+    <div
+      className="error-text"
+    />
+  </div>
+  <div
+    className="form-group"
+  >
+    <label
+      className="form-label"
+    >
+      Email слушателя
+    </label>
+    <input
+      className="form-control"
+      name="listenerEmail"
+      onChange={[Function]}
+      placeholder="Введите email"
+      required={true}
+      type="email"
+      value=""
+    />
+    <div
+      className="error-text"
+    />
+  </div>
+  <div
+    className="text-right"
+  />
+</form>
+`;
