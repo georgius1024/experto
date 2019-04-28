@@ -3,7 +3,11 @@
  */
 'use strict'
 const chai = require('chai')
-const { Mailer, invitationMessage, expertNotificationMessage } = require('../src/classes/mailer')
+const {
+  Mailer,
+  listenertNotificationMessage,
+  expertNotificationMessage
+} = require('../src/classes/mailer')
 
 const assert = chai.assert
 chai.should()
@@ -28,8 +32,14 @@ describe('Mailer class', async function() {
       email: userEmail,
       code: userCode
     }
+    const room = {
+      roomName: 'r1',
+      listenerNamer: 'l1',
+      listenerEmail: '1@2',
+      listenerCode: '123'
+    }
 
-    await invitationMessage(user)
+    await listenertNotificationMessage(user, room)
     assert.isOk(Mailer.lastMessage)
   })
 
@@ -44,5 +54,4 @@ describe('Mailer class', async function() {
     await expertNotificationMessage(user)
     assert.isOk(Mailer.lastMessage)
   })
-
 })

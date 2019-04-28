@@ -60,15 +60,17 @@ app.use(async ctx => {
 })
 
 const options = {
-  key: fs.readFileSync(process.env.SSL_KEY),
-  cert: fs.readFileSync(process.env.SSL_CERT)
+  key: fs.readFileSync(process.env.SSL_KEY || './keys/server.key'),
+  cert: fs.readFileSync(process.env.SSL_CERT || './keys/server.crt')
 }
 
 const port = process.env.APP_LISTEN_PORT || 3000
 const server = https.createServer(options, app.callback()).listen(port)
 
 dns.lookup(os.hostname(), function(err, addr) {
-  logger.info(`${process.env.APP_NAME} now running at ${'https://' + addr + ':' + port}`)
+  logger.info(
+    `${process.env.APP_NAME} now running at ${'https://' + addr + ':' + port}`
+  )
 })
 
 RTC.init()
