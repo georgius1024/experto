@@ -2,7 +2,7 @@ const electron = require('electron')
 const { app, BrowserWindow, Menu } = electron
 app.commandLine.appendSwitch('ignore-certificate-errors', '1')
 app.commandLine.appendSwitch('allow-insecure-localhost', '1')
-app.commandLine.appendSwitch('llow-running-insecure-content', '1')
+app.commandLine.appendSwitch('allow-running-insecure-content', '1')
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
 const path = require('path')

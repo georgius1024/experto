@@ -52,7 +52,7 @@
     "axios": "^0.18.0",
     "classnames": "^2.2.6",
     "electron-is-dev": "^1.0.1",
-    "kurento-utils": "^6.9.0",
+    "kurento-utils": "^6.13.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.6",
@@ -64,14 +64,15 @@
     "redux": "^4.0.1",
     "redux-localstorage": "^0.4.1",
     "rxjs": "^6.4.0",
-    "webrtc-adapter": "^7.2.1"
+    "webrtc-adapter": "^7.5.1"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1",
     "@rescripts/cli": "^0.0.10",
     "@rescripts/rescript-env": "^0.0.5",
     "concurrently": "^4.1.0",
-    "electron": "^4.0.6",
+    "cross-env": "^7.0.2",
+    "electron": "^8.2.0",
     "electron-builder": "^20.38.5",
     "electron-devtools-installer": "^2.2.4",
     "eslint-plugin-react": "^7.12.4",

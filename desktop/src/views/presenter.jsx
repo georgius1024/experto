@@ -4,7 +4,11 @@ import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import actions from '../store/actions'
 import ObservableSocket from '../utils/observable-socket'
-import { CameraSubscription, ScreenSubscription, CameraControlSubscription } from '../components/subscription'
+import {
+  CameraSubscription,
+  ScreenSubscription,
+  CameraControlSubscription
+} from '../components/subscription'
 import Publication from '../components/publication'
 import config from '../config'
 import ChatList from '../components/chat/list'
@@ -12,27 +16,27 @@ import ChatForm from '../components/chat/form'
 import { message, error } from '../notification'
 import './presenter.scss'
 const electron = window.require('electron')
-// TODO LOGGING
+
 const getScreenConstraints = (src, callback) => {
-  electron.desktopCapturer.getSources({ types: ['screen'] }, (error, sources) => {
-    if (error) {
-      callback(error)
-    }
-    const constraints = {
-      audio: false,
-      video: {
-        mandatory: {
-          chromeMediaSource: 'desktop',
-          chromeMediaSourceId: sources[0].id,
-          minWidth: 1280,
-          maxWidth: 1280,
-          minHeight: 720,
-          maxHeight: 720
+  electron.desktopCapturer
+    .getSources({ types: ['screen'] })
+    .then(async sources => {
+      console.table(sources)
+      const constraints = {
+        audio: false,
+        video: {
+          mandatory: {
+            chromeMediaSource: 'desktop',
+            chromeMediaSourceId: sources[0].id,
+            minWidth: 1280,
+            maxWidth: 1280,
+            minHeight: 720,
+            maxHeight: 720
+          }
         }
       }
-    }
-    callback(null, constraints)
-  })
+      callback(null, constraints)
+    })
 }
 window.getScreenConstraints = getScreenConstraints
 
@@ -52,7 +56,8 @@ class Presenter extends PureComponent {
     this.connect()
   }
   componentDidUpdate(prevProps) {
-    const sameCode = prevProps.match.params.code === this.props.match.params.code
+    const sameCode =
+      prevProps.match.params.code === this.props.match.params.code
     if (!sameCode) {
       this.connect()
     }
@@ -88,39 +93,39 @@ class Presenter extends PureComponent {
 
     this.signalSocket.message$.subscribe(message => {
       switch (message.id) {
-      case 'welcome':
-        {
-          const { id, chat = [], ...presenter } = message
-          this.setState({
-            presenter,
-            chat
-          })
-          this.props.publicationCameraAdd(presenter.participantId + '-camera')
-          this.props.publicationScreenAdd(presenter.participantId + '-screen')
-        }
-        break
-      case 'message':
-        {
-          const { id, ...rest } = message
-          const chat = [...this.state.chat]
-          chat.push(rest)
-          this.setState({
-            chat
-          })
-        }
-        break
-      case 'publications':
-        {
-          const subscriptions = []
-          message.data.forEach(publisher =>
-            publisher.channels.forEach(channel => {
-              subscriptions.push({ channel, name: publisher.name })
+        case 'welcome':
+          {
+            const { id, chat = [], ...presenter } = message
+            this.setState({
+              presenter,
+              chat
             })
-          )
-          this.props.subscriptionsUpdateAll(subscriptions)
-        }
-        break
-      default:
+            this.props.publicationCameraAdd(presenter.participantId + '-camera')
+            this.props.publicationScreenAdd(presenter.participantId + '-screen')
+          }
+          break
+        case 'message':
+          {
+            const { id, ...rest } = message
+            const chat = [...this.state.chat]
+            chat.push(rest)
+            this.setState({
+              chat
+            })
+          }
+          break
+        case 'publications':
+          {
+            const subscriptions = []
+            message.data.forEach(publisher =>
+              publisher.channels.forEach(channel => {
+                subscriptions.push({ channel, name: publisher.name })
+              })
+            )
+            this.props.subscriptionsUpdateAll(subscriptions)
+          }
+          break
+        default:
       }
     })
     this.logging = process.env.NODE_ENV !== 'production'
@@ -166,13 +171,19 @@ class Presenter extends PureComponent {
 
   myCamera() {
     return this.props.subscriptions
-      .filter(subscription => subscription.channel === this.props.publications.camera)
+      .filter(
+        subscription => subscription.channel === this.props.publications.camera
+      )
       .map(myCamera => {
         const toggleAudio = () => {
-          return this.props.cameraAudio ? this.props.cameraAudioDisable() : this.props.cameraAudioEnable()
+          return this.props.cameraAudio
+            ? this.props.cameraAudioDisable()
+            : this.props.cameraAudioEnable()
         }
         const toggleVideo = () => {
-          return this.props.cameraVideo ? this.props.cameraVideoDisable() : this.props.cameraVideoEnable()
+          return this.props.cameraVideo
+            ? this.props.cameraVideoDisable()
+            : this.props.cameraVideoEnable()
         }
         return (
           <CameraControlSubscription
@@ -191,10 +202,14 @@ class Presenter extends PureComponent {
 
   myScreen() {
     return this.props.subscriptions
-      .filter(subscription => subscription.channel === this.props.publications.screen)
+      .filter(
+        subscription => subscription.channel === this.props.publications.screen
+      )
       .map(myScreen => {
         const toggleVideo = () => {
-          return this.props.screenVideo ? this.props.screenVideoDisable() : this.props.screenVideoEnable()
+          return this.props.screenVideo
+            ? this.props.screenVideoDisable()
+            : this.props.screenVideoEnable()
         }
         return (
           <ScreenSubscription
@@ -212,7 +227,11 @@ class Presenter extends PureComponent {
   roomParticipants() {
     return this.props.subscriptions
       .filter(
-        subscription => ![this.props.publications.camera, this.props.publications.screen].includes(subscription.channel)
+        subscription =>
+          ![
+            this.props.publications.camera,
+            this.props.publications.screen
+          ].includes(subscription.channel)
       )
       .map(subscription => {
         return (
@@ -304,17 +323,26 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    publicationCameraAdd: payload => dispatch(actions.publicationCameraAdd(payload)),
-    publicationCameraRemove: payload => dispatch(actions.publicationCameraRemove(payload)),
-    publicationScreenAdd: payload => dispatch(actions.publicationScreenAdd(payload)),
-    publicationScreenRemove: payload => dispatch(actions.publicationScreenRemove(payload)),
-    publicationsRemoveAll: payload => dispatch(actions.publicationRemoveAll(payload)),
-    subscriptionsRemoveAll: payload => dispatch(actions.subscriptionsRemoveAll(payload)),
-    subscriptionsUpdateAll: payload => dispatch(actions.subscriptionsUpdateAll(payload)),
+    publicationCameraAdd: payload =>
+      dispatch(actions.publicationCameraAdd(payload)),
+    publicationCameraRemove: payload =>
+      dispatch(actions.publicationCameraRemove(payload)),
+    publicationScreenAdd: payload =>
+      dispatch(actions.publicationScreenAdd(payload)),
+    publicationScreenRemove: payload =>
+      dispatch(actions.publicationScreenRemove(payload)),
+    publicationsRemoveAll: payload =>
+      dispatch(actions.publicationRemoveAll(payload)),
+    subscriptionsRemoveAll: payload =>
+      dispatch(actions.subscriptionsRemoveAll(payload)),
+    subscriptionsUpdateAll: payload =>
+      dispatch(actions.subscriptionsUpdateAll(payload)),
     cameraAudioEnable: payload => dispatch(actions.cameraAudioEnable(payload)),
-    cameraAudioDisable: payload => dispatch(actions.cameraAudioDisable(payload)),
+    cameraAudioDisable: payload =>
+      dispatch(actions.cameraAudioDisable(payload)),
     cameraVideoEnable: payload => dispatch(actions.cameraVideoEnable(payload)),
-    cameraVideoDisable: payload => dispatch(actions.cameraVideoDisable(payload)),
+    cameraVideoDisable: payload =>
+      dispatch(actions.cameraVideoDisable(payload)),
     screenVideoEnable: payload => dispatch(actions.screenVideoEnable(payload)),
     screenVideoDisable: payload => dispatch(actions.screenVideoDisable(payload))
   }

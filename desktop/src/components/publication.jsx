@@ -117,6 +117,7 @@ class Publication extends PureComponent {
 
     const options = {
       localVideo: this.video.current,
+      sdpSemantics: "plan-b",
       onicecandidate: candidate => {
         this.log('Local candidate')
         this.sendMessage({

@@ -1,71 +1,76 @@
-import React, { Component, PureComponent } from 'react'
-import classNames from 'classnames'
-import { filter } from 'rxjs/operators'
-import PropTypes from 'prop-types'
-import kurentoUtils from 'kurento-utils'
-import styles from './subscription.module.scss'
-import microphoneOn from '../assets/microphone-solid.svg'
-import microphoneOff from '../assets/microphone-slash-solid.svg'
-import videoOn from '../assets/video-solid.svg'
-import videoOff from '../assets/video-slash-solid.svg'
+import React, { Component, PureComponent } from "react";
+import classNames from "classnames";
+import { filter } from "rxjs/operators";
+import PropTypes from "prop-types";
+import kurentoUtils from "kurento-utils";
+import styles from "./subscription.module.scss";
+import microphoneOn from "../assets/microphone-solid.svg";
+import microphoneOff from "../assets/microphone-slash-solid.svg";
+import videoOn from "../assets/video-solid.svg";
+import videoOff from "../assets/video-slash-solid.svg";
 
 class DefaultSubscription extends Component {
   constructor(props) {
-    super(props)
-    this.video = React.createRef()
-    this.webRtcPeer = null
-    this.subscription = null
-    this.reconnect = null
+    super(props);
+    this.video = React.createRef();
+    this.webRtcPeer = null;
+    this.subscription = null;
+    this.reconnect = null;
     this.state = {
       connected: false
-    }
+    };
   }
 
   componentDidMount() {
-    this.connect()
+    this.connect();
   }
 
   componentDidUpdate(prevProps) {
-    const sameSocket = prevProps.socket === this.props.socket
-    const sameChannel = prevProps.channel === this.props.channel
+    const sameSocket = prevProps.socket === this.props.socket;
+    const sameChannel = prevProps.channel === this.props.channel;
     if (!sameSocket || !sameChannel) {
-      this.connect()
+      this.connect();
     }
-    this.adjustVolumeLevel()
+    this.adjustVolumeLevel();
   }
 
   componentWillUnmount() {
-    this.disconnect()
+    this.disconnect();
   }
 
   log(message, data) {
     if (this.props.logging) {
       if (arguments.length === 2) {
-        console.log('Subscriber on channel', this.props.channel, message, data)
+        console.log("Subscriber on channel", this.props.channel, message, data);
       } else {
-        console.log('Subscriber on channel', this.props.channel, message)
+        console.log("Subscriber on channel", this.props.channel, message);
       }
     }
   }
 
   error(message) {
     if (this.props.logging) {
-      console.error('Subscriber on channel', this.props.channel, 'throws error', message)
+      console.error(
+        "Subscriber on channel",
+        this.props.channel,
+        "throws error",
+        message
+      );
     }
   }
 
   sendMessage(message) {
     if (this.props.socket.online()) {
-      if (typeof message === 'string') {
+      if (typeof message === "string") {
         message = {
           id: message
-        }
+        };
       }
-      message.channel = this.props.channel
-      this.log('sending message', message.id)
-      this.props.socket.send(message)
+      message.channel = this.props.channel;
+      this.log("sending message", message.id);
+      this.props.socket.send(message);
     } else {
-      this.error('socket closed, can not send', message)
+      this.error("socket closed, can not send", message);
     }
   }
 
@@ -74,41 +79,41 @@ class DefaultSubscription extends Component {
       .pipe(filter(message => message.channel === this.props.channel))
       .subscribe(message => {
         switch (message.id) {
-          case 'startResponseForSubscriber':
-            this.log('SDP answer received from server. Connecting...')
-            this.webRtcPeer.processAnswer(message.sdpAnswer)
-            this.onConnected()
-            break
-          case 'error':
-            this.error('Error message from server', message.message)
-            break
-          case 'iceCandidateForSubscriber':
-            this.webRtcPeer.addIceCandidate(message.candidate)
-            break
-          case 'stopPublishing':
-            this.unsubscribe()
-            break
-          case 'startPublishing':
-            this.subscribe()
-            break
+          case "startResponseForSubscriber":
+            this.log("SDP answer received from server. Connecting...");
+            this.webRtcPeer.processAnswer(message.sdpAnswer);
+            this.onConnected();
+            break;
+          case "error":
+            this.error("Error message from server", message.message);
+            break;
+          case "iceCandidateForSubscriber":
+            this.webRtcPeer.addIceCandidate(message.candidate);
+            break;
+          case "stopPublishing":
+            this.unsubscribe();
+            break;
+          case "startPublishing":
+            this.subscribe();
+            break;
           default:
         }
-      })
-    this.subscribe()
+      });
+    this.subscribe();
   }
 
   disconnect() {
-    this.unsubscribe()
-    this.subscription.unsubscribe()
+    this.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   adjustVolumeLevel() {
     if (this.video.current) {
       if (this.props.muted) {
-        this.video.current.volume = 0
-        this.video.current.muted = true
+        this.video.current.volume = 0;
+        this.video.current.muted = true;
       } else {
-        this.video.current.volume = this.props.volume / 100
+        this.video.current.volume = this.props.volume / 100;
       }
     }
   }
@@ -116,141 +121,157 @@ class DefaultSubscription extends Component {
   subscribe() {
     const options = {
       remoteVideo: this.video.current,
+      sdpSemantics: "plan-b",
       onicecandidate: candidate => {
-        this.log('got local candidate')
+        this.log("got local candidate");
         this.sendMessage({
-          id: 'onIceCandidateFromSubscriber',
+          id: "onIceCandidateFromSubscriber",
           candidate: candidate
-        })
+        });
       }
-    }
+    };
     if (this.props.stunServer) {
       options.configuration = {
         iceServers: [
           {
-            url: 'stun:' + this.props.stunServer
+            url: "stun:" + this.props.stunServer
           }
         ]
-      }
+      };
     }
-    this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options, error => {
-      if (error) {
-        return this.error(error)
-      }
-      this.adjustVolumeLevel()
-      this.webRtcPeer.generateOffer((error, sdpOffer) => {
+    this.webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(
+      options,
+      error => {
         if (error) {
-          return this.error(error)
+          return this.error(error);
         }
-        this.log('invoking SDP offer callback function')
-        this.sendMessage({
-          id: 'subscribe',
-          sdpOffer
-        })
-      })
-    })
+        this.adjustVolumeLevel();
+        this.webRtcPeer.generateOffer((error, sdpOffer) => {
+          if (error) {
+            return this.error(error);
+          }
+          this.log("invoking SDP offer callback function");
+          this.sendMessage({
+            id: "subscribe",
+            sdpOffer
+          });
+        });
+      }
+    );
   }
 
   unsubscribe() {
-    this.sendMessage('unsubscribe')
+    this.sendMessage("unsubscribe");
     if (this.reconnect) {
-      clearTimeout(this.reconnect)
+      clearTimeout(this.reconnect);
     }
     if (this.webRtcPeer) {
-      this.webRtcPeer.dispose()
-      this.webRtcPeer = null
+      this.webRtcPeer.dispose();
+      this.webRtcPeer = null;
     }
   }
 
   onConnected() {
-    this.setState({ connected: true })
+    this.setState({ connected: true });
     if (this.props.onConnected) {
-      this.props.onConnected(this)
+      this.props.onConnected(this);
     }
     if (this.props.reconnect) {
       this.reconnect = setTimeout(() => {
-        this.checkIsConnected()
-      }, this.props.reconnect)
+        this.checkIsConnected();
+      }, this.props.reconnect);
     }
   }
 
   checkIsConnected() {
     if (this.videoIsFlowing()) {
-      this.log('✓Subscription is active')
+      this.log("✓Subscription is active");
     } else {
-      this.log('×Subscription is frozen, need reconnect')
-      this.unsubscribe()
+      this.log("×Subscription is frozen, need reconnect");
+      this.unsubscribe();
       // Подключаемся не сразу, а через 0.8 секунды
       // Чтобы сервер закрыл прошлую коннекцию
       setTimeout(() => {
-        this.subscribe()
-      }, 800)
+        this.subscribe();
+      }, 800);
     }
   }
 
   getUri(format) {
-    let video = this.video.current
-    let canvas = document.createElement('CANVAS')
+    let video = this.video.current;
+    let canvas = document.createElement("CANVAS");
     if (!format) {
-      format = 'png'
+      format = "png";
     }
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    canvas.getContext('2d').drawImage(video, 0, 0)
-    return canvas.toDataURL('image/' + format)
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0);
+    return canvas.toDataURL("image/" + format);
   }
 
   videoIsFlowing() {
-    let dataUri = this.getUri('png')
-    let result = dataUri.length > 100
-    return result
+    let dataUri = this.getUri("png");
+    let result = dataUri.length > 100;
+    return result;
   }
 
   render() {
-    return <video ref={this.video} autoPlay muted={this.props.muted} poster={this.props.poster} />
+    return (
+      <video
+        ref={this.video}
+        autoPlay
+        muted={this.props.muted}
+        poster={this.props.poster}
+      />
+    );
   }
 }
 
 class MutedSubscription extends PureComponent {
   render() {
-    return <DefaultSubscription {...this.props} muted={true} />
+    return <DefaultSubscription {...this.props} muted={true} />;
   }
 }
 
 class CameraSubscription extends PureComponent {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       muted: true,
       volume: 50,
       initial: true,
       connected: false
-    }
-    this.unmute = this.unmute.bind(this)
+    };
+    this.unmute = this.unmute.bind(this);
   }
   unmute() {
     this.setState({
       initial: false,
       muted: false
-    })
+    });
   }
 
   setVolume(volume) {
     this.setState({
       volume,
       muted: Number(volume) === 0
-    })
+    });
   }
 
   render() {
     const setVolume = ({ target: { value } }) => {
-      this.setVolume(value)
-    }
+      this.setVolume(value);
+    };
     const onConnected = () => {
-      this.setState({ connected: true })
-    }
+      this.setState({ connected: true });
+    };
     return (
-      <div className={classNames(styles['subscription'], styles['camera-subscription'])}>
+      <div
+        className={classNames(
+          styles["subscription"],
+          styles["camera-subscription"]
+        )}
+      >
         {this.state.connected && this.state.initial ? (
           <div className={this.state.initial ? styles.overlay : styles.hidden}>
             <button className={styles.unmute} onClick={this.unmute}>
@@ -260,9 +281,17 @@ class CameraSubscription extends PureComponent {
         ) : null}
 
         {this.state.connected ? (
-          <div className={styles['controls-panel']}>
-            <div className={styles['name-display']}>{this.props.displayName}</div>
-            <input type="range" min="0" max="100" className={styles['volume-control']} onChange={setVolume} />
+          <div className={styles["controls-panel"]}>
+            <div className={styles["name-display"]}>
+              {this.props.displayName}
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              className={styles["volume-control"]}
+              onChange={setVolume}
+            />
           </div>
         ) : null}
 
@@ -273,48 +302,66 @@ class CameraSubscription extends PureComponent {
           onConnected={onConnected}
         />
       </div>
-    )
+    );
   }
 }
 
 class ScreenSubscription extends PureComponent {
   render() {
     return (
-      <div className={classNames(styles['subscription'], styles['screen-subscription'])}>
+      <div
+        className={classNames(
+          styles["subscription"],
+          styles["screen-subscription"]
+        )}
+      >
         <DefaultSubscription {...this.props} />
       </div>
-    )
+    );
   }
 }
 
 class CameraControlSubscription extends PureComponent {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       connected: false
-    }
+    };
   }
   render() {
     const onConnected = () => {
-      this.setState({ connected: true })
-    }
+      this.setState({ connected: true });
+    };
     return (
-      <div className={classNames(styles['subscription'], styles['camera-control-subscription'])}>
+      <div
+        className={classNames(
+          styles["subscription"],
+          styles["camera-control-subscription"]
+        )}
+      >
         {this.state.connected ? (
-          <div className={styles['controls-panel']}>
-            <div className={styles['buttons']}>
+          <div className={styles["controls-panel"]}>
+            <div className={styles["buttons"]}>
               <button onClick={this.props.toggleAudio} title="Вкл/выкл аудио">
-                <img alt="" className={styles.icon} src={this.props.audio ? microphoneOn : microphoneOff} />
+                <img
+                  alt=""
+                  className={styles.icon}
+                  src={this.props.audio ? microphoneOn : microphoneOff}
+                />
               </button>
               <button onClick={this.props.toggleVideo} title="Вкл/выкл видео">
-                <img alt="" className={styles.icon} src={this.props.video ? videoOn : videoOff} />
+                <img
+                  alt=""
+                  className={styles.icon}
+                  src={this.props.video ? videoOn : videoOff}
+                />
               </button>
             </div>
           </div>
         ) : null}
         <MutedSubscription {...this.props} onConnected={onConnected} />
       </div>
-    )
+    );
   }
 }
 
@@ -328,26 +375,26 @@ DefaultSubscription.propTypes = {
   volume: PropTypes.number,
   reconnect: PropTypes.number,
   onConnected: PropTypes.func
-}
+};
 
 DefaultSubscription.defaultProps = {
-  stunServer: '',
+  stunServer: "",
   logging: false,
   volume: 50,
   muted: true,
   reconnect: 5000
-}
+};
 
 CameraSubscription.propTypes = {
   displayName: PropTypes.string.isRequired
-}
+};
 
 CameraControlSubscription.propTypes = {
   toggleAudio: PropTypes.func.isRequired,
   toggleVideo: PropTypes.func,
   audio: PropTypes.bool.isRequired,
   video: PropTypes.bool.isRequired
-}
+};
 
 export {
   DefaultSubscription as default,
@@ -356,4 +403,4 @@ export {
   MutedSubscription as ScreenControlSubscription,
   CameraSubscription,
   CameraControlSubscription
-}
+};
